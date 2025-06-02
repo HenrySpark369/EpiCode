@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     userDiv.classList.add("chat-message", "chat-user");
     userDiv.innerHTML = `<strong>Tú:</strong> ${pregunta}`;
     chatContainer.appendChild(userDiv);
+    scrollToBottom();
 
     try {
       // Petición POST al endpoint /api/ask
@@ -64,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         botDiv.classList.add("chat-message", "chat-bot");
         botDiv.innerHTML = `<strong>Asistente:</strong> ${marked.parse(markdown)}`;
         chatContainer.appendChild(botDiv);
+        scrollToBottom();
         statusMsg.textContent = "¡Listo!";
       }
     } catch (err) {
@@ -72,4 +74,9 @@ document.addEventListener("DOMContentLoaded", () => {
       statusMsg.textContent = "Ocurrió un error al contactar al servidor.";
     }
   });
+
+  function scrollToBottom() {
+    const chatContainer = document.getElementById("chatContainer");
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
 });
