@@ -26,20 +26,21 @@ def index():
 @app.route("/api/ask", methods=["POST"])
 def ask():
     data = request.get_json()
-    pregunta = data.get("question", "").strip()
+    mensajes = data.get("messages", [])
 
-    if not pregunta:
-        return jsonify({"error": "La pregunta está vacía."}), 400
+    # Si no hay mensaje system, insertar uno por defecto
+    if not mensajes or mensajes[0].get("role") != "system":
+        mensajes.insert(0, {
+            "role": "system",
+            "content": "Eres un asistente de programación muy hábil. Responde de forma clara y concisa."
+        })
 
     try:
         # 5. Consumir la API de OpenAI con el modelo o4-mini-high
         response = openai.chat.completions.create(
             model="o4-mini",
-            messages=[
-                {"role": "system", "content": "Eres un asistente de programación muy hábil. Responde de forma clara y concisa."},
-                {"role": "user", "content": pregunta}
-            ],
-            max_completion_tokens=1024,
+            messages=mensajes,
+            max_completion_tokens=2048,
             top_p=1.0,
             frequency_penalty=0.0,
             presence_penalty=0.0,
