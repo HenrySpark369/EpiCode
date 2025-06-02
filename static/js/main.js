@@ -24,8 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (res.data.error) {
         statusMsg.textContent = `Error: ${res.data.error}`;
       } else {
-        // Mostrar la respuesta
-        respuestaText.textContent = res.data.answer;
+        // Convertir el Markdown recibido a HTML usando marked()
+        const markdown = res.data.answer;
+        respuestaText.innerHTML = marked.parse(markdown);
+
         respuestaContainer.style.display = "block";
         statusMsg.textContent = "¡Listo!";
       }
