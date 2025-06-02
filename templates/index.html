@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <title>Asistente de Programación</title>
   <!-- Bootstrap CDN (opcional) para estilos rápidos -->
   <link
@@ -29,7 +30,7 @@
     <!-- Área para mostrar la respuesta -->
     <div id="respuestaContainer" class="mt-4" style="display: none;">
       <h5>Respuesta:</h5>
-      <pre id="respuestaText" class="bg-white p-3 border rounded"></pre>
+      <div id="respuestaText" class="bg-white p-3 border rounded"></div>
     </div>
 
     <!-- Mensajes de estado -->
