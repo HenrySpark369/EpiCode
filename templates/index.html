@@ -44,28 +44,40 @@
       background-color: white;
       border: 1px solid #dee2e6;
       border-radius: 0.5rem;
+      margin-bottom: 130px; /* espacio para el input fijo */
+    }
+    #inputArea {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #f8f9fa;
+      border-top: 1px solid #dee2e6;
+      padding: 1rem;
+      z-index: 1000;
     }
   </style>
 </head>
 <body class="bg-light">
   <div class="container py-5">
     <h1 class="mb-4 text-center">Asistente de Programación 🧑‍💻</h1>
-
-    <!-- Input para pregunta -->
-    <div class="mb-3">
-      <label for="questionInput" class="form-label">Escribe tu pregunta de programación:</label>
-      <textarea
-        id="questionInput"
-        class="form-control"
-        rows="3"
-        placeholder="Ejemplo: ¿Cómo leo un archivo JSON en Python?"
-      ></textarea>
-    </div>
-    <button id="sendBtn" class="btn btn-primary">Enviar</button>
     <div id="chatContainer" class="mt-4"></div>
+  </div> <!-- Cierra container -->
 
-    <!-- Mensajes de estado -->
-    <div id="statusMsg" class="mt-2 text-muted"></div>
+  <div id="inputArea">
+    <div class="container">
+      <div class="mb-3">
+        <label for="questionInput" class="form-label">Escribe tu pregunta de programación:</label>
+        <textarea
+          id="questionInput"
+          class="form-control"
+          rows="3"
+          placeholder="Ejemplo: ¿Cómo leo un archivo JSON en Python?"
+        ></textarea>
+      </div>
+      <button id="sendBtn" class="btn btn-primary">Enviar</button>
+      <div id="statusMsg" class="mt-2 text-muted"></div>
+    </div>
   </div>
 
   <!-- Scripts -->
