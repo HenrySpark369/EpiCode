@@ -1,0 +1,52 @@
+# Entornos virtuales
+venv/
+.env/
+*.env
+
+# Archivos de configuración de sistema
+.DS_Store
+__MACOSX/
+
+# Compilados de Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Base de datos local
+*.db
+*.db-wal
+*.db-shm
+
+# Logs
+*.log
+
+# Archivos de salida temporal
+*.bak
+*.swp
+*.tmp
+
+# Archivos específicos del editor
+.vscode/
+.idea/
+
+# Archivos de pruebas
+coverage/
+htmlcov/
+.tox/
+nosetests.xml
+pytest_cache/
+.cache/
+
+# Archivos de IPython/Jupyter
+.ipynb_checkpoints
+
+# Ignorar paquetes descargados
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Archivos ZIP que no deban versionarse
+*.zip
