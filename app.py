@@ -39,14 +39,18 @@ def ask():
                 {"role": "system", "content": "Eres un asistente de programación muy hábil. Responde de forma clara y concisa."},
                 {"role": "user", "content": pregunta}
             ],
-            max_completion_tokens=512,        # ajusta según lo que necesites
+            max_completion_tokens=1024,
             top_p=1.0,
             frequency_penalty=0.0,
             presence_penalty=0.0,
+            reasoning_effort="medium"
         )
+        app.logger.debug("Respuesta completa de OpenAI: %s", response)
 
         # 6. Extraer la respuesta
         contenido = response.choices[0].message.content.strip()
+
+        app.logger.debug("Contenido generado: %s", contenido)
 
         return jsonify({"answer": contenido})
 
