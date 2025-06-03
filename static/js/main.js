@@ -2,6 +2,7 @@
 
 // Número de turnos que quieres conservar (cada turno incluye un mensaje de usuario y uno de assistant)
 const MAX_TURNOS = 6;  // por ejemplo, conserva 3 intercambios completos (user+assistant = 2 turnos cada uno × 3 = 6 mensajes)
+const modelSelect = document.getElementById("modelSelect");
 
 let chatHistory = [
   { role: "system", content: "Eres un asistente muy hábil en programación..." }
@@ -49,6 +50,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const ultimos = chatHistory.slice(-MAX_TURNOS);
     const mensajesAEnviar = [systemMensaje, ...ultimos];
 
+    // 1) Leer modelo escogido
+    const modeloEscogido = modelSelect.value;
+
     // Mostrar que se está procesando
     statusMsg.textContent = "Pensando… 🧠";
     chatContainer.style.display = "block";
@@ -62,7 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Petición POST al endpoint /api/ask
-      const res = await axios.post("/api/ask", { messages: mensajesAEnviar });
+      const res = await axios.post("/api/ask", {
+        messages: mensajesAEnviar,
+        model: modeloEscogido
+      });
 
       if (res.data.error) {
         statusMsg.textContent = `Error: ${res.data.error}`;
