@@ -74,17 +74,38 @@
 
   <div id="inputArea">
     <div class="container">
-      <div class="mb-3">
-        <label for="questionInput" class="form-label">Escribe tu pregunta de programación:</label>
+      <div class="d-flex align-items-start g-2">
+        <!-- textarea ocupa todo el ancho restante -->
         <textarea
           id="questionInput"
-          class="form-control"
-          rows="3"
-          placeholder="Ejemplo: ¿Cómo leo un archivo JSON en Python?"
+          class="form-control me-2"
+          rows="2"
+          placeholder="Escribe tu pregunta de programación…"
         ></textarea>
+
+        <!-- Bloque compacto con el select y el botón -->
+        <div class="d-flex flex-column">
+          <!-- selector discreto junto al botón -->
+          <select
+            id="modelSelect"
+            class="form-select form-select-sm mb-1"
+            style="width: auto; min-width: 120px;"
+            title="Modelo"
+          >
+            {% for m in models %}
+              <option value="{{ m }}"
+                {% if m==default_model %}selected{% endif %}>
+                {{ m }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <button id="sendBtn" class="btn btn-primary btn-sm">
+            Enviar
+          </button>
+        </div>
       </div>
-      <button id="sendBtn" class="btn btn-primary">Enviar</button>
-      <div id="statusMsg" class="mt-2 text-muted"></div>
+      <div id="statusMsg" class="mt-2 text-muted small"></div>
     </div>
   </div>
 
