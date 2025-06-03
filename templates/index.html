@@ -67,10 +67,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 </head>
 <body class="bg-light">
-  <div class="container py-5">
-    <h1 class="mb-4 text-center">Asistente de Programación 🧑‍💻</h1>
-    <div id="chatContainer" class="mt-4"></div>
-  </div> <!-- Cierra container -->
+  <div class="d-flex">
+    <aside id="sidebar" style="width:200px; border-right:1px solid #ccc; padding:1rem">
+      <button id="newConvBtn" class="btn btn-sm btn-primary mb-2 w-100">
+        Nueva conversación
+      </button>
+      <ul id="convList" class="list-group"></ul>
+    </aside>
+    <div class="container py-5">
+      <h1 class="mb-4 text-center">Asistente de Programación 🧑‍💻</h1>
+      <div id="chatContainer" class="mt-4"></div>
+    </div>
+  </div>
 
   <div id="inputArea">
     <div class="container">
