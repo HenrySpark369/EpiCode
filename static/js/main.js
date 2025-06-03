@@ -13,6 +13,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatContainer = document.getElementById("chatContainer");
   const statusMsg = document.getElementById("statusMsg");
 
+  // Configurar marked con highlight.js
+  marked.setOptions({
+    highlight: function(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      } else {
+        return hljs.highlightAuto(code).value;
+      }
+    },
+  });
+
   questionInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -66,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
         botDiv.innerHTML = `<strong>Asistente:</strong> ${marked.parse(markdown)}`;
         chatContainer.appendChild(botDiv);
         scrollToBottom();
+        hljs.highlightAll();
         statusMsg.textContent = "¡Listo!";
       }
     } catch (err) {
