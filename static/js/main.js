@@ -206,6 +206,42 @@ function scrollToBottom() {
 // --- Main Logic (DOMContentLoaded) ---
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const key      = "theme-preference";
+  const html     = document.documentElement;
+  const btnTheme = document.getElementById("themeToggle");
+
+  // 1) Detecto tema inicial: 
+  //    - primero lo guardado en localStorage,
+  //    - si no, lo que viene en el atributo data-theme del <html>,
+  //    - si tampoco, la preferencia del sistema.
+  const saved     = localStorage.getItem(key);
+  const attrTheme = html.getAttribute("data-theme");
+  const system    = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  let theme       = saved || attrTheme || system;
+
+  // 2) Función para aplicar y guardar
+  function applyTheme(t) {
+    html.setAttribute("data-theme", t);
+    localStorage.setItem(key, t);
+    btnTheme.textContent = t === "dark" ? " ☀️ " : " 🌙 ";
+  }
+
+  // 3) Aplico tema inicial
+  applyTheme(theme);
+
+  // Al clicar, alterna, guarda y actualiza texto
+  btnTheme.addEventListener("click", () => {
+    const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    applyTheme(next);
+  });
+
+  window.matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", e => {
+    if (!localStorage.getItem(key)) { // sólo si el usuario NO ha forzado un tema
+      applyTheme(e.matches ? "dark" : "light");
+    }
+  });
+  
   const sendBtn = document.getElementById("sendBtn");
   const questionInput = document.getElementById("questionInput");
   const statusMsg = document.getElementById("statusMsg");
