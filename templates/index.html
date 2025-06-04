@@ -16,105 +16,233 @@
   />
 
   <style>
-    /*——————— PALETAS ———————*/
+    /*—————————————————————————————————————*/
+    /* 1) PALETA DE COLORES               */
+    /*—————————————————————————————————————*/
     :root {
-      /* Colores claro */
       --color-bg: #ffffff;
       --color-surface: #f1f3f5;
       --color-text: #212529;
       --color-primary: #0d6efd;
+      --color-primary-rgb: 13,110,253;
+      --color-text-on-primary: #ffffff;
       --color-border: #dee2e6;
       --color-input-bg: #f8f9fa;
-      --color-text-on-primary: #ffffff;
+      --color-placeholder: #6c757d;        /* gris medio para light */
     }
     [data-theme="dark"] {
-      /* Colores oscuro */
       --color-bg: #121212;
       --color-surface: #1e1e1e;
       --color-text: #e0e0e0;
       --color-primary: #90caf9;
+      --color-primary-rgb: 144,202,249;
+      --color-text-on-primary: #000000;
       --color-border: #333333;
       --color-input-bg: #2c2c2c;
-      --color-text-on-primary: #000000;
+      --color-placeholder: #767676;        /* gris claro para dark */
     }
-    /*——————— USO DE VARIABLES ———————*/
+
+    /*—————————————————————————————————————*/
+    /* 2) TRANSICIONES SUAVES              */
+    /*—————————————————————————————————————*/
+    * {
+      transition: background-color .25s ease,
+                  color .25s ease,
+                  border-color .25s ease;
+    }
+
+    /*—————————————————————————————————————*/
+    /* 3) ESTILOS GLOBALES                  */
+    /*—————————————————————————————————————*/
     body {
-      background-color: var(--color-bg);
+      margin: 0;
+      background: var(--color-bg);
       color: var(--color-text);
+      font-family: sans-serif;
     }
     #sidebar {
-      background-color: var(--color-surface);
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-border);
     }
-    #sidebar .list-group,
-    #sidebar .btn {
+    .list-group-item {
+      background: var(--color-input-bg);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      margin-bottom: .25rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: .5rem 1rem;
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      border-radius: .25rem;
+      cursor: pointer;
+    }
+    .btn:hover {
+      opacity: .9;
+    }
+    .btn:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+    }
+    .btn-secondary {
+      background: var(--color-surface);
       border-color: var(--color-border);
+      color: var(--color-text);
     }
+    .form-control,
+    .form-select {
+      display: block;
+      width: 100%;
+      padding: .5rem;
+      background: var(--color-input-bg);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      border-radius: .25rem;
+    }
+    #questionInput::placeholder {
+      color: var(--color-placeholder);
+      opacity: 1;
+    }
+
+    /*—————————————————————————————————————*/
+    /* 4) CONTENEDOR DE CHAT               */
+    /*—————————————————————————————————————*/
     #chatContainer {
       max-height: 60vh;
       overflow-y: auto;
       padding: 1.5rem;
-      background-color: var(--color-bg);
-      border: 1px solid var(--color-border);
-      border-radius: 0.5rem;
       margin-bottom: 1rem;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: .5rem;
     }
+    #chatContainer::-webkit-scrollbar {
+      width: 8px;
+    }
+    #chatContainer::-webkit-scrollbar-thumb {
+      background: var(--color-border);
+      border-radius: 4px;
+    }
+
+    /*—————————————————————————————————————*/
+    /* 5) MENSAJES DE CHAT                 */
+    /*—————————————————————————————————————*/
+    .chat-message {
+      display: inline-block;
+      clear: both;
+      max-width: 60%;
+      padding: .75rem 1rem;
+      margin-bottom: .75rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      line-height: 1.4;
+      position: relative;
+    }
+    .chat-user {
+      background: var(--color-primary);
+      color: var(--color-text-on-primary);
+      float: right;
+      margin-right: .5rem;
+      text-align: right;
+    }
+    .chat-bot {
+      background: var(--color-surface);
+      color: var(--color-text);
+      float: left;
+      margin-left: .5rem;
+      text-align: left;
+    }
+
+    /*—————————————————————————————————————*/
+    /* 6) ÁREA DE ENTRADA FIJA             */
+    /*—————————————————————————————————————*/
     #inputArea {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: var(--color-input-bg);
+      background: var(--color-input-bg);
+      color: var(--color-text);
       border-top: 1px solid var(--color-border);
       padding: 1rem;
       z-index: 1000;
     }
-    .chat-message {
-      display: inline-block;
-      clear: both;
-      max-width: 60%;
-      padding: 0.75rem 1rem;
-      border-radius: 1rem;
-      margin-bottom: 0.75rem;
-      word-wrap: break-word;
-      position: relative;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      line-height: 1.4;
+    #inputArea .form-control,
+    #inputArea .form-select,
+    #inputArea .btn {
+      color: var(--color-text) !important;
     }
-    .chat-user {
-      background-color: var(--color-primary);
-      color: var(--color-text-on-primary);
-      float: right;
-      margin-right: 0.5rem;
-      text-align: right;
+
+    /*—————————————————————————————————————*/
+    /* 7) ESTILO PARA MENSAJES DE ESTADO  */
+    /*—————————————————————————————————————*/
+    #statusMsg,
+    .statusMsg,
+    #inputArea .text-muted {
+      display: block;
+      margin-top: .5rem;
+      font-size: .875rem;
+      color: var(--color-text) !important;
     }
-    .chat-bot {
-      background-color: var(--color-surface);
+
+    /*—————————————————————————————————————*/
+    /* 8) HIGHLIGHT.JS & CÓDIGO             */
+    /*—————————————————————————————————————*/
+    pre, code {
+      display: block;
+      background: var(--color-surface);
       color: var(--color-text);
-      float: left;
-      margin-left: 0.5rem;
-      text-align: left;
+      padding: .5rem;
+      border-radius: .25rem;
+      overflow-x: auto;
     }
-    .btn-primary {
-      background-color: var(--color-primary);
-      border-color: var(--color-primary);
-      color: var(--color-text-on-primary);
+    .hljs-comment,
+    .hljs-quote           { color: #6a9955; }
+    .hljs-keyword,
+    .hljs-selector-tag   { color: #569cd6; }
+    .hljs-string,
+    .hljs-title          { color: #ce9178; }
+
+    /*—————————————————————————————————————*/
+    /* 9) OVERRIDES PARA BOOTSTRAP FOCUS   */
+    /*—————————————————————————————————————*/
+    .form-control:focus,
+    .form-select:focus {
+      background-color: var(--color-input-bg) !important;
+      color: var(--color-text) !important;
+      border-color: var(--color-primary) !important;
+      box-shadow: 0 0 0 .25rem rgba(var(--color-primary-rgb), .25) !important;
+      outline: none;
     }
-    .form-select,
-    .form-control {
-      background-color: var(--color-input-bg);
-      color: var(--color-text);
-      border-color: var(--color-border);
+
+    /*—————————————————————————————————————*/
+    /* 10) LIST‐GROUP EN DARK THEMING      */
+    /*—————————————————————————————————————*/
+    [data-theme="dark"] .list-group-item {
+      background: var(--color-input-bg) !important;
+      color: var(--color-text)  !important;
+      border-color: var(--color-border) !important;
     }
-    .form-select:focus,
-    .form-control:focus {
-      box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+    [data-theme="dark"] .list-group-item-action.active,
+    [data-theme="dark"] .list-group-item-action:active {
+      background-color: var(--color-primary) !important;
+      color: var(--color-text-on-primary) !important;
+      border-color: var(--color-primary) !important;
     }
   </style>
 </head>
 <body>
   <div class="d-flex">
     <aside id="sidebar" style="width:200px; border-right:1px solid var(--color-border); padding:1rem">
-      <button id="themeToggle" class="btn btn-sm btn-secondary mb-2 w-100">
+      <button id="themeToggle" type="button" class="btn btn-sm btn-secondary mb-2 w-100">
         Cambiar tema
       </button>
       <button id="newConvBtn" class="btn btn-sm btn-primary mb-2 w-100">
@@ -124,7 +252,7 @@
     </aside>
 
     <div class="container py-5">
-      <h1 class="mb-4 text-center">Asistente de Programación 🧑‍💻</h1>
+      <h1 class="mb-4 text-center">EpiCode ⚛️</h1>
       <div id="chatContainer" class="mt-4"></div>
     </div>
   </div>
@@ -168,13 +296,5 @@
   <!-- Tu script principal -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-  <script>
-    // Alternar tema
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const html = document.documentElement;
-      const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      html.setAttribute('data-theme', next);
-    });
-  </script>
 </body>
 </html>
