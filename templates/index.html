@@ -1,79 +1,128 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <title>Asistente de Programación</title>
-  <!-- Bootstrap CDN (opcional) para estilos rápidos -->
+  <!-- Bootstrap CSS -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
   />
-  <style>
-    .chat-message {
-      display: inline-block;
-      clear: both;
-      max-width: 60%;               /* Ejemplo: 60% del ancho del contenedor */
-      padding: 0.75rem 1rem;
-      border-radius: 1rem;
-      margin-bottom: 0.75rem;
-      word-wrap: break-word;
-      position: relative;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      line-height: 1.4;
-    }
-    .chat-user {
-      background-color: #0d6efd;
-      color: white;
-      float: right;
-      margin-right: 0.5rem;
-      text-align: right;
-    }
-    .chat-bot {
-      background-color: #f1f3f5;
-      color: #212529;
-      float: left;
-      margin-left: 0.5rem;
-      text-align: left;
-    }
-    #chatContainer {
-      max-height: 60vh;
-      overflow-y: auto;
-      padding: 1.5rem;
-      background-color: white;
-      border: 1px solid #dee2e6;
-      border-radius: 0.5rem;
-      margin-bottom: 130px; /* espacio para el input fijo */
-    }
-    #inputArea {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: #f8f9fa;
-      border-top: 1px solid #dee2e6;
-      padding: 1rem;
-      z-index: 1000;
-    }
-  </style>
   <!-- highlight.js CSS -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css"
   />
 
-  <!-- highlight.js JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <style>
+    /*——————— PALETAS ———————*/
+    :root {
+      /* Colores claro */
+      --color-bg: #ffffff;
+      --color-surface: #f1f3f5;
+      --color-text: #212529;
+      --color-primary: #0d6efd;
+      --color-border: #dee2e6;
+      --color-input-bg: #f8f9fa;
+      --color-text-on-primary: #ffffff;
+    }
+    [data-theme="dark"] {
+      /* Colores oscuro */
+      --color-bg: #121212;
+      --color-surface: #1e1e1e;
+      --color-text: #e0e0e0;
+      --color-primary: #90caf9;
+      --color-border: #333333;
+      --color-input-bg: #2c2c2c;
+      --color-text-on-primary: #000000;
+    }
+    /*——————— USO DE VARIABLES ———————*/
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+    }
+    #sidebar {
+      background-color: var(--color-surface);
+    }
+    #sidebar .list-group,
+    #sidebar .btn {
+      border-color: var(--color-border);
+    }
+    #chatContainer {
+      max-height: 60vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+      background-color: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    #inputArea {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--color-input-bg);
+      border-top: 1px solid var(--color-border);
+      padding: 1rem;
+      z-index: 1000;
+    }
+    .chat-message {
+      display: inline-block;
+      clear: both;
+      max-width: 60%;
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+      margin-bottom: 0.75rem;
+      word-wrap: break-word;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      line-height: 1.4;
+    }
+    .chat-user {
+      background-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+      float: right;
+      margin-right: 0.5rem;
+      text-align: right;
+    }
+    .chat-bot {
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      float: left;
+      margin-left: 0.5rem;
+      text-align: left;
+    }
+    .btn-primary {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-text-on-primary);
+    }
+    .form-select,
+    .form-control {
+      background-color: var(--color-input-bg);
+      color: var(--color-text);
+      border-color: var(--color-border);
+    }
+    .form-select:focus,
+    .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+    }
+  </style>
 </head>
-<body class="bg-light">
+<body>
   <div class="d-flex">
-    <aside id="sidebar" style="width:200px; border-right:1px solid #ccc; padding:1rem">
+    <aside id="sidebar" style="width:200px; border-right:1px solid var(--color-border); padding:1rem">
+      <button id="themeToggle" class="btn btn-sm btn-secondary mb-2 w-100">
+        Cambiar tema
+      </button>
       <button id="newConvBtn" class="btn btn-sm btn-primary mb-2 w-100">
         Nueva conversación
       </button>
       <ul id="convList" class="list-group"></ul>
     </aside>
+
     <div class="container py-5">
       <h1 class="mb-4 text-center">Asistente de Programación 🧑‍💻</h1>
       <div id="chatContainer" class="mt-4"></div>
@@ -83,17 +132,13 @@
   <div id="inputArea">
     <div class="container">
       <div class="d-flex align-items-start g-2">
-        <!-- textarea ocupa todo el ancho restante -->
         <textarea
           id="questionInput"
           class="form-control me-2"
           rows="2"
           placeholder="Escribe tu pregunta de programación…"
         ></textarea>
-
-        <!-- Bloque compacto con el select y el botón -->
         <div class="d-flex flex-column">
-          <!-- selector discreto junto al botón -->
           <select
             id="modelSelect"
             class="form-select form-select-sm mb-1"
@@ -107,7 +152,6 @@
               </option>
             {% endfor %}
           </select>
-
           <button id="sendBtn" class="btn btn-primary btn-sm">
             Enviar
           </button>
@@ -117,8 +161,20 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Librerías JS -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <!-- Tu script principal -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <script>
+    // Alternar tema
+    document.getElementById('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+    });
+  </script>
 </body>
 </html>
