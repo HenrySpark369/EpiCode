@@ -188,6 +188,13 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
         db.session.commit()
         return jsonify({"id": conv.id, "title": conv.title})
 
+    @app_instance.route("/api/conversations/<int:conv_id>", methods=["DELETE"])
+    def delete_conversation(conv_id):
+        conv = Conversation.query.get_or_404(conv_id)
+        db.session.delete(conv)
+        db.session.commit()
+        return jsonify({"success": True}), 200
+
     # Health check endpoint
     @app_instance.route("/health")
     def health():

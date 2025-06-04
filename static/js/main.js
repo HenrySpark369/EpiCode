@@ -43,6 +43,28 @@ async function saveConversationTitle(convId, newTitle) {
   }
 }
 
+// Borrar conversación
+async function deleteConversation(convId) {
+  if (!confirm("¿Seguro que quieres borrar esta conversación?")) return;
+  try {
+    await axios.delete(`/api/conversations/${convId}`);
+    // Si borramos la conversación activa, limpiamos el chat
+    if (currentConvId === convId) {
+      currentConvId = null;
+      document.getElementById("chatContainer").innerHTML = "";
+    }
+    await loadConversations();  // recarga listado
+    // Si aún hay conversaciones, selecciona la primera
+    if (conversations.length) {
+      selectConversation(conversations[0].id);
+    }
+    document.getElementById("statusMsg").textContent = "Conversación borrada.";
+  } catch (err) {
+    console.error("Error borrando conversación:", err);
+    document.getElementById("statusMsg").textContent = "No se pudo borrar la conversación.";
+  }
+}
+
 // --- UI for the conversation list (sidebar) ---
 
 function renderConversationList() {
@@ -74,8 +96,19 @@ function renderConversationList() {
       }
     };
 
+    // Borrar
+    const delBtn = document.createElement("button");
+    delBtn.className = "btn btn-sm btn-link text-danger p-0";
+    delBtn.innerHTML = "🗑️";
+    delBtn.title = "Borrar conversación";
+    delBtn.onclick = e => {
+      e.stopPropagation();
+      deleteConversation(conv.id);
+    };
+
     li.appendChild(titleSpan);
     li.appendChild(renameBtn);
+    li.appendChild(delBtn);
 
     li.onclick = () => selectConversation(conv.id);
     ul.appendChild(li);
