@@ -8,6 +8,45 @@ let currentConvId = null;          // ID of the active conversation
 
 // --- Helpers for interacting with the Backend ---
 
+// Añade esta función justo antes de tu listener de sendBtn
+async function sendWithStream(convId, pregunta, model) {
+  const res = await fetch(
+    `/api/conversations/${convId}/messages/stream`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: pregunta, model })
+    }
+  );
+  if (!res.ok) throw new Error("Error en streaming: " + res.statusText);
+
+  const chatContainer = document.getElementById("chatContainer");
+  // Creamos el div del asistente con un <span> donde irá llegando el stream
+  const botDiv = document.createElement("div");
+  botDiv.className = "chat-message chat-bot";
+  botDiv.innerHTML = `<strong>Asistente:</strong> <div class="streaming"></div>`;
+  chatContainer.appendChild(botDiv);
+  scrollToBottom();
+  const streamDiv = botDiv.querySelector(".streaming");
+
+  // Leemos el body en chunks
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let fullText = "";
+  
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    // 1) Acumulas el trozo
+    fullText += decoder.decode(value, { stream: true });
+    // 2) parseas TODO el markdown
+    streamDiv.innerHTML = marked.parse(fullText);
+    // 3) resaltas el código
+    hljs.highlightAll();
+    scrollToBottom();
+  }
+}
+
 /**
  * Loads all conversations from the backend and updates the local 'conversations' array.
  */
@@ -312,40 +351,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     statusMsg.textContent = "Pensando… 🧠";
 
     try {
-      // Send message to the backend
-      const res = await axios.post(`/api/conversations/${currentConvId}/messages`, {
-        content: pregunta,
-        model: modelSelect.value
-      });
-
-      if (res.data.error) {
-        statusMsg.textContent = `Error: ${res.data.error}`;
-        // Optionally, remove the last user message from UI if send failed
-        // userDiv.remove();
-        return;
-      }
-      const answer = res.data.answer.trim();
-
-      // --- Display assistant's answer ---
-      const botDiv = document.createElement("div");
-      botDiv.classList.add("chat-message", "chat-bot");
-      botDiv.innerHTML = `<strong>Asistente:</strong> ${marked.parse(answer)}`;
-      chatContainer.appendChild(botDiv);
-      scrollToBottom();
-      hljs.highlightAll(); // Highlight new code blocks
-
-      document.getElementById("statusMsg").textContent = "¡Listo!";
-
-      // After successful message, re-render chat just in case (e.g. for complete sync if history diverges)
-      // Or simply trust the optimistic update and backend's answer
-      // A full `renderChat()` call here is robust but might cause a flicker.
-      // For a simpler app, appending is often enough.
-      // await renderChat(); // Optional: uncomment if you want to fully re-render chat from backend after each message
+      // 3) Aquí llamamos a nuestro streaming
+      await sendWithStream(currentConvId, pregunta, modelSelect.value);
+      statusMsg.textContent = "¡Listo!";
     } catch (err) {
       console.error(err);
-      statusMsg.textContent = "Ocurrió un error al contactar al servidor.";
-      // Optionally, remove the last user message from UI if send failed
-      // userDiv.remove();
+      statusMsg.textContent = "Error en el streaming.";
     }
   });
 });
