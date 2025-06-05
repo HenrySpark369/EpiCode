@@ -1,14 +1,16 @@
 # routes.py
 import os
-from flask import request, jsonify, render_template, current_app # Import render_template directly
+from flask import request, jsonify, render_template, current_app, Response, stream_with_context # Import render_template directly
 from models import db, Conversation, Message, RoleEnum
-import openai
+from openai import OpenAI
 
 MAX_TURNOS = 6
 
 def init_app(app_instance): # 'app_instance' is the Flask app object passed from manage.py
     # Configure OpenAI API key and allowed models from the app config
-    openai.api_key = app_instance.config.get("OPENAI_API_KEY")
+    client = OpenAI(
+    api_key=app_instance.config.get("OPENAI_API_KEY")
+    )
     ALLOWED_MODELS = app_instance.config.get("ALLOWED_MODELS", [])
 
     # 3. Ruta principal que sirve la plantilla HTML
@@ -17,7 +19,7 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
         return render_template(
             "index.html",
             models=ALLOWED_MODELS, # Use the ALLOWED_MODELS from the init_app scope
-            default_model="o4-mini")
+            default_model="chatgpt-4o-latest")
 
     # 4. Endpoint API para procesar preguntas de programación
     @app_instance.route("/api/ask", methods=["POST"])
@@ -25,8 +27,8 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
         data = request.get_json()
         mensajes = data.get("messages", [])
 
-        # 3) Leemos el modelo enviado (o fallback a o4-mini)
-        model = data.get("model", "o4-mini")
+        # 3) Leemos el modelo enviado (o fallback a chatgpt-4o-latest)
+        model = data.get("model", "chatgpt-4o-latest")
         # Access ALLOWED_MODELS via current_app.config since it's an app-wide setting
         if model not in current_app.config.get("ALLOWED_MODELS", []):
             return jsonify({"error": f"Modelo no permitido: {model}"}), 400
@@ -39,7 +41,7 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
             })
 
         try:
-            # Prepare arguments for openai.responses.create
+            # Prepare arguments for client.responses.create
             params = {
                 "model": model,
                 "input": mensajes,
@@ -50,7 +52,7 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
             if model in ["o4-mini"]:
                 params["reasoning"] = {"effort": "medium"}
 
-            resp = openai.responses.create(**params)
+            resp = client.responses.create(**params)
             current_app.logger.debug("Respuesta completa de OpenAI: %s", resp) # Use current_app.logger
 
             # --- Your truncated token check ---
@@ -121,7 +123,7 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
         # POST -> add user message, call OpenAI, save response
         data = request.get_json()
         user_text = data.get("content")
-        model = data.get("model", "o4-mini")
+        model = data.get("model", "chatgpt-4o-latest")
 
         # 1) Save user message
         last_message = Message.query.filter_by(conversation_id=conv.id)\
@@ -160,7 +162,7 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
         params = {"model": model, "input": payload, "max_output_tokens": 4096}
         if model in ["o4-mini"]:
             params["reasoning"] = {"effort": "medium"}
-        resp = openai.responses.create(**params)
+        resp = client.responses.create(**params)
         answer = resp.output_text.strip()
 
         # 4) Save assistant
@@ -174,6 +176,96 @@ def init_app(app_instance): # 'app_instance' is the Flask app object passed from
         db.session.commit()
 
         return jsonify({"answer": answer})
+
+    @app_instance.route("/api/conversations/<int:conv_id>/messages/stream", methods=["POST"])
+    def stream_messages(conv_id):
+        conv = Conversation.query.get_or_404(conv_id)
+        data = request.get_json()
+        user_text = data.get("content", "")
+        model     = data.get("model", "chatgpt-4o-latest")
+
+        # 1) Guardar mensaje del usuario
+        last_msg = Message.query.filter_by(conversation_id=conv.id)\
+                                .order_by(Message.turn_index.desc())\
+                                .first()
+        idx = last_msg.turn_index if last_msg else -1
+        user_msg = Message(
+            conversation_id=conv.id,
+            role=RoleEnum.user,
+            content=user_text,
+            turn_index=idx + 1
+        )
+        db.session.add(user_msg)
+        db.session.flush()
+
+        # 2) Construir contexto: system + últimos MAX_TURNOS
+        all_msgs = Message.query.filter_by(conversation_id=conv.id)\
+                                .order_by(Message.turn_index.asc()).all()
+        system_msg = next((m for m in all_msgs if m.role==RoleEnum.system), None)
+        history    = [m for m in all_msgs if m.role!=RoleEnum.system][-MAX_TURNOS:]
+        payload    = []
+        if system_msg:
+            payload.append({"role":"system", "content":system_msg.content})
+        payload += [{"role":m.role.value, "content":m.content} for m in history]
+
+        # 3) Generator de streaming
+        def generate():
+            full_resp = ""
+            try:
+                # Llamada streaming al SDK
+                if model == "o4-mini":
+                    stream_resp = client.responses.create(
+                        model=model,
+                        input=payload,
+                        stream=True,
+                        max_output_tokens=4096,
+                        reasoning={"effort":"medium"}
+                    )
+                else:
+                    stream_resp = client.chat.completions.create(
+                        model=model,
+                        messages=payload,
+                        stream=True,
+                        max_tokens=512
+                    )
+
+                for chunk in stream_resp:
+                    # Extraemos el delta según API
+                    if model == "o4-mini":
+                        delta = getattr(chunk, "text", "")
+                    else:
+                        # ChatCompletion API
+                        delta = getattr(chunk.choices[0].delta, "content", "") or ""
+
+                    if not delta:
+                        continue
+                    full_resp += delta
+                    yield delta.encode("utf-8")
+
+            except Exception as e:
+                current_app.logger.error("Error en stream: %s", e, exc_info=True)
+                yield f"\n\n[Stream interrumpido: {e}]\n".encode("utf-8")
+
+            finally:
+                # 4) Guardar respuesta completa
+                assistant_msg = Message(
+                    conversation_id=conv.id,
+                    role=RoleEnum.assistant,
+                    content=full_resp,
+                    turn_index=idx + 2
+                )
+                db.session.add(assistant_msg)
+                db.session.commit()
+                current_app.logger.debug("Respuesta stream guardada.")
+
+        # 5) Devolver la Response streaming
+        return Response(
+            stream_with_context(generate()),
+            mimetype="text/plain; charset=utf-8",
+            headers={"Cache-Control":"no-transform"}
+        )
+
+      
 
     # (Optional) rename conversation
     @app_instance.route("/api/conversations/<int:conv_id>", methods=["PATCH"])
