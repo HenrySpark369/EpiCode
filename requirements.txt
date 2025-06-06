@@ -5,3 +5,5 @@ psycopg2
 python-dotenv
 openai
 gunicorn
+flask-login
+flask-admin
