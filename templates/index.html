@@ -285,7 +285,7 @@
           Bienvenido, {{ current_user.username }}
           {% if current_user.is_admin %}
             <br>
-            <a href="{{ url_for('auth.admin_usuarios_pendientes') }}" class="btn btn-sm btn-info admin-link">
+            <a href="{{ url_for('flask_admin.index') }}" class="btn btn-sm btn-info admin-link">
               Admin Panel
             </a>
           {% endif %}
