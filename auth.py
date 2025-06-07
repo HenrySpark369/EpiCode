@@ -71,7 +71,8 @@ def login():
         next_page = request.form.get('next') or request.args.get('next')
         if next_page and is_safe_url(next_page):
             return redirect(next_page)
-        return redirect(url_for("index"))
+        else:
+            return redirect(url_for("index"))
     return render_template('login.html')
 
 @auth_bp.route('/logout', methods=['POST'])
