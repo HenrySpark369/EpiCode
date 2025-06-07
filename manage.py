@@ -12,10 +12,12 @@ from dotenv import load_dotenv
 from flask_login import LoginManager, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.actions import action
+from models import db, User 
+import routes 
+from auth import auth_bp
 
-from models import db, User # Keep this for database interaction and User model
-import routes # Keep this to initialize your main application routes
-from auth import auth_bp # **Keep this to register your authentication blueprint**
+from wtforms.fields import Field
 
 load_dotenv(override=True)
 
@@ -54,8 +56,40 @@ def init_admin_env():
 
 
 class SecureModelView(ModelView):
+    def scaffold_form(self):
+        form_class = super().scaffold_form()
+        for name, field in list(form_class.__dict__.items()):
+            if isinstance(field, Field) and hasattr(field, 'query_factory'):
+                delattr(form_class, name)
+        return form_class
+    form_excluded_columns = ('conversations',)
+
+    # Sólo estos campos en el form de edición
+    form_columns = ['username', 'email', 'is_admin', 'is_approved']
+
+    # Columnas visibles
+    column_list = ['id', 'username', 'email', 'is_admin', 'is_approved']
+    column_filters = ['is_admin', 'is_approved']
+    column_searchable_list = ['username', 'email']
+    can_create = False    # opcional
+    can_delete = True
+    can_edit   = True
+    can_view_details = True
+
     def is_accessible(self):
         return current_user.is_authenticated and current_user.is_admin
+
+    # acción en lote para aprobar usuarios
+    @action('approve', 'Aprobar seleccionados', '¿Seguro que quieres aprobar estos usuarios?')
+    def action_approve(self, ids):
+        query = User.query.filter(User.id.in_(ids))
+        n = 0
+        for u in query.all():
+            if not u.is_approved:
+                u.is_approved = True
+                n += 1
+        db.session.commit()
+        flash(f"{n} usuario(s) aprobado(s).", "success")
 
 def create_app():
     app = Flask(__name__)
@@ -83,7 +117,6 @@ def create_app():
 
     logging.basicConfig(level=logging.DEBUG)
 
-    # **Register the authentication blueprint FIRST**
     app.register_blueprint(auth_bp)
 
     # Initialize your main application routes AFTER the blueprint
@@ -94,8 +127,12 @@ def create_app():
     app.cli.add_command(init_admin_env)
 
     # Flask-Admin
-    admin = Admin(app, name="Panel Admin", template_mode="bootstrap3")
-    admin.add_view(SecureModelView(User, db.session))
+    admin = Admin(app, name="Panel Admin", template_mode="bootstrap3", url="/admin", endpoint="flask_admin")
+    admin.add_view(SecureModelView(User, db.session, name="Usuarios"))
+
+    # imprime todas las rutas ya registradas
+    for rule in app.url_map.iter_rules():
+        app.logger.debug(f"{rule.endpoint:30}   {rule}")
 
     return app
 
