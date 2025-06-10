@@ -24,10 +24,18 @@ async function sendWithStream(convId, pregunta, model) {
   // Creamos el div del asistente con un <span> donde irá llegando el stream
   const botDiv = document.createElement("div");
   botDiv.className = "chat-message chat-bot";
-  botDiv.innerHTML = `<strong>Asistente:</strong> <div class="streaming"></div>`;
+  // Etiqueta “Asistente:”
+  const labelBot = document.createElement("strong");
+  labelBot.textContent = "Asistente:";
+  botDiv.appendChild(labelBot);
+// Contenedor para el streaming
+  const streamingDiv = document.createElement("div");
+  streamingDiv.className = "streaming";
+  botDiv.appendChild(streamingDiv);
+
   chatContainer.appendChild(botDiv);
   scrollToBottom();
-  const streamDiv = botDiv.querySelector(".streaming");
+  const streamDiv = streamingDiv;
 
   // Leemos el body en chunks
   const reader = res.body.getReader();
@@ -336,7 +344,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const chatContainer = document.getElementById("chatContainer");
     const userDiv = document.createElement("div");
     userDiv.classList.add("chat-message", "chat-user");
-    userDiv.innerHTML = `<strong>Tú:</strong> ${pregunta}`;
+    const labelYou = document.createElement("strong");
+    labelYou.textContent = "Tú: ";
+    userDiv.appendChild(labelYou);
+    userDiv.appendChild(document.createTextNode(pregunta));
     chatContainer.appendChild(userDiv);
     scrollToBottom();
 
