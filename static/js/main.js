@@ -170,6 +170,12 @@ async function selectConversation(id) {
   currentConvId = id;
   renderConversationList(); // Highlight the active conversation in the sidebar
   await renderChat(); // Load and display the chat history for the selected conversation
+  // Si estamos en modo móvil, ocultar el sidebar automáticamente
+  if (window.innerWidth <= 768) {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.remove("active");
+    document.body.classList.remove("sidebar-open");
+  }
 }
 
 /**
@@ -370,4 +376,26 @@ document.addEventListener("DOMContentLoaded", async () => {
       statusMsg.textContent = "Error en el streaming.";
     }
   });
+
+  const sidebar = document.getElementById("sidebar");
+  const toggleSidebarBtn = document.getElementById("toggleSidebarBtn");
+
+  if (toggleSidebarBtn && sidebar) {
+    toggleSidebarBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+      document.body.classList.toggle("sidebar-open");
+    });
+
+    // Ocultar sidebar al hacer clic fuera de él (solo móvil)
+    document.addEventListener("click", function (e) {
+      if (window.innerWidth <= 768 && sidebar.classList.contains("active")) {
+        const clickedInside = sidebar.contains(e.target) || toggleSidebarBtn.contains(e.target);
+        if (!clickedInside) {
+          sidebar.classList.remove("active");
+          document.body.classList.remove("sidebar-open");
+        }
+      }
+    });
+  }
+
 });
