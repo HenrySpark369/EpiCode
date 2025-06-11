@@ -48,7 +48,8 @@ async function sendWithStream(convId, pregunta, model) {
     // 1) Acumulas el trozo
     fullText += decoder.decode(value, { stream: true });
     // 2) parseas TODO el markdown
-    streamDiv.innerHTML = marked.parse(fullText);
+    const dirty = marked.parse(fullText);
+    streamDiv.innerHTML = DOMPurify.sanitize(dirty);
     // 3) resaltas el código
     hljs.highlightAll();
     scrollToBottom();
@@ -232,7 +233,9 @@ async function renderChat() {
             const div = document.createElement("div");
             div.classList.add("chat-message", msg.role === "user" ? "chat-user" : "chat-bot");
             const who = msg.role === "user" ? "Tú" : "Asistente";
-            const content = msg.role === "assistant" ? marked.parse(msg.content) : msg.content;
+            const content = msg.role === "assistant"
+              ? DOMPurify.sanitize(marked.parse(msg.content))
+              : msg.content;
             div.innerHTML = `<strong>${who}:</strong> ${content}`;
             chatContainer.appendChild(div);
         });
