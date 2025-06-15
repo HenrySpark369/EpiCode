@@ -1,5 +1,16 @@
 // main.js
 
+// Ajuste dinámico de espacio para #chatContainer según alto de #inputArea
+function updateInputHeight() {
+  const input = document.getElementById('inputArea');
+  if (!input) return;
+  const height = input.offsetHeight;
+  document.documentElement.style.setProperty('--input-height', `${height}px`);
+}
+// Actualiza en carga y al redimensionar
+window.addEventListener('load', updateInputHeight);
+window.addEventListener('resize', updateInputHeight);
+
 const MAX_TURNOS = 6; // Still defined, but the actual sliding window is managed by the backend
 const SYSTEM_MESSAGE_CONTENT = "Eres un asistente de programación muy hábil. Responde de forma clara y concisa."; // Backend creates the system message
 
