@@ -328,6 +328,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const statusMsg = document.getElementById("statusMsg");
   const modelSelect = document.getElementById("modelSelect");
   const newConvBtn = document.getElementById("newConvBtn"); // Get the new conversation button
+  const tokenCountSpan = document.getElementById("tokenCount");
+  const tokenLimitSpan = document.getElementById("tokenLimit");
+  const errorAlert = document.getElementById("errorAlert");
 
   // Configure marked + highlight.js
   marked.setOptions({
@@ -338,6 +341,45 @@ document.addEventListener("DOMContentLoaded", async () => {
       return hljs.highlightAuto(code).value;
     }
   });
+
+  // Function to count tokens (simple word count)
+  function countTokens(text) {
+    if (!text) return 0;
+    return text.trim().split(/\s+/).length;
+  }
+
+  // Update token count display based on current input and selected model
+  function updateTokenInfo() {
+    const text = questionInput.value;
+    const tokens = countTokens(text);
+    tokenCountSpan.textContent = tokens;
+
+    // Set token limit based on selected model
+    const model = modelSelect.value;
+    // Hardcoded limits for demo; ideally fetch from backend or config
+    const modelLimits = {
+      "chatgpt-4o-latest": 8192,
+      "o4-mini": 2048,
+      "chatgpt-3.5-turbo": 4096
+    };
+    const limit = modelLimits[model] || 4096;
+    tokenLimitSpan.textContent = limit;
+
+    // Change color if close to limit
+    if (tokens > limit) {
+      tokenCountSpan.style.color = "red";
+      statusMsg.textContent = "¡Has excedido el límite de tokens para este modelo!";
+      sendBtn.disabled = true;
+    } else if (tokens > limit * 0.8) {
+      tokenCountSpan.style.color = "orange";
+      statusMsg.textContent = "Cuidado: te estás acercando al límite de tokens.";
+      sendBtn.disabled = false;
+    } else {
+      tokenCountSpan.style.color = "";
+      statusMsg.textContent = "";
+      sendBtn.disabled = false;
+    }
+  }
 
   // Initial load: Load existing conversations or create a new one
   await loadConversations();
@@ -351,6 +393,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Event listener for "Nueva conversación" button
   newConvBtn.addEventListener("click", newConversation);
+
+  // Update token info on input and model change
+  questionInput.addEventListener("input", updateTokenInfo);
+  modelSelect.addEventListener("change", updateTokenInfo);
 
   // Enter key to send message
   questionInput.addEventListener("keydown", e => {
@@ -373,6 +419,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       statusMsg.textContent = "No hay una conversación activa. Por favor, crea o selecciona una.";
       return;
     }
+
+    // Clear previous error alert
+    errorAlert.classList.add("d-none");
+    errorAlert.textContent = "";
 
     // --- Optimistic UI Update: Display user message immediately ---
     const chatContainer = document.getElementById("chatContainer");
@@ -402,6 +452,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
       console.error(err);
       statusMsg.textContent = "Error en el streaming.";
+      // Show error alert if error response has JSON with error_code and error
+      if (err.response && err.response.data) {
+        const data = err.response.data;
+        if (data.error_code && data.error) {
+          errorAlert.textContent = data.error;
+          errorAlert.classList.remove("d-none");
+        }
+      }
     }
   });
 

@@ -432,19 +432,23 @@
     <div id="chatContainer"></div>
   </div>
 
-  <div id="inputArea">
-    <textarea id="questionInput" class="form-control" rows="2" placeholder="Escribe tu pregunta…"></textarea>
-    <select id="modelSelect" class="form-select form-select-sm">
-      {% for m in models %}
-            <option value="{{ m }}"
-              {% if m==default_model %}selected{% endif %}>
-              {{ m }}
-            </option>
-          {% endfor %}
-    </select>
-    <button id="sendBtn" class="btn btn-primary btn-sm">Enviar</button>
-    <div id="statusMsg" class="text-muted small mt-2 ps-1"></div>
-  </div>
+    <div id="inputArea">
+      <textarea id="questionInput" class="form-control" rows="2" placeholder="Escribe tu pregunta…"></textarea>
+      <select id="modelSelect" class="form-select form-select-sm">
+        {% for m in models %}
+              <option value="{{ m }}"
+                {% if m==default_model %}selected{% endif %}>
+                {{ m }}
+              </option>
+            {% endfor %}
+      </select>
+      <button id="sendBtn" class="btn btn-primary btn-sm">Enviar</button>
+      <div id="statusMsg" class="text-muted small mt-2 ps-1"></div>
+      <div id="tokenInfo" class="text-muted small mt-1 ps-1" style="font-size: 0.85rem;">
+        Tokens usados: <span id="tokenCount">0</span> / <span id="tokenLimit">-</span>
+      </div>
+      <div id="errorAlert" class="alert alert-danger mt-2 d-none" role="alert" style="margin-bottom: 0;"></div>
+    </div>
 </div>
   <div id="overlay"></div>
 
