@@ -8,6 +8,7 @@ from flask import Flask, abort # abort might not be used here anymore, can remov
 from flask.cli import with_appcontext
 # from flask_sqlalchemy import SQLAlchemy # This import can be removed, as db is imported from models
 from flask_migrate import Migrate
+
 import config
 from flask_login import LoginManager, current_user
 from flask_admin import Admin
@@ -15,7 +16,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.actions import action
 from models import db, User 
 import routes 
-from auth import auth_bp
+from auth import auth_bp, csrf
 
 from wtforms.fields import Field
 
@@ -104,6 +105,8 @@ def create_app():
     login_manager.login_view = "auth.login" # Correctly points to the blueprint's login endpoint
     login_manager.login_message = "Por favor, inicia sesión para acceder."
     login_manager.login_message_category = "warning"
+
+    csrf.init_app(app)
 
     logging.basicConfig(level=logging.DEBUG)
 
