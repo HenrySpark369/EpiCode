@@ -20,6 +20,7 @@
   {% endwith %}
 
   <form method="post" action="{{ url_for('auth.register') }}"> {# Explicitly set action #}
+    {{ csrf_token() }}
     <label for="username">Usuario:</label>
     <input type="text" name="username" id="username" placeholder="Tu nombre de usuario" required />
 

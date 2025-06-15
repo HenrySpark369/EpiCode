@@ -2,6 +2,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required # Add current_user if needed for admin_required
 from models import User, db # Import db and User
+from flask_wtf import CSRFProtect
 
 # If you have an admin_required decorator, it should ideally be in a separate decorators.py
 # If it's not, you might need to import it here.
@@ -10,6 +11,8 @@ from decorators import admin_required # Make sure this path is correct
 
 from urllib.parse import urlparse, urljoin
 
+
+csrf = CSRFProtect()
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 

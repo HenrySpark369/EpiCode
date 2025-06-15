@@ -18,17 +18,18 @@
     {% endif %}
   {% endwith %}
 
-    <form action="" method="post">
-      <input type="hidden" name="next" value="{{ request.args.get('next') or request.form.get('next') }}">
+<form action="" method="post">
+  {{ csrf_token() }}
+  <input type="hidden" name="next" value="{{ request.args.get('next') or request.form.get('next') }}">
 
-      <label for="username">Usuario</label>
-      <input type="text" name="username" id="username" required autofocus />
+  <label for="username">Usuario</label>
+  <input type="text" name="username" id="username" required autofocus />
 
-      <label for="password">Contraseña</label>
-      <input type="password" name="password" id="password" required />
+  <label for="password">Contraseña</label>
+  <input type="password" name="password" id="password" required />
 
-      <button type="submit" class="btn">Entrar</button>
-    </form>
+  <button type="submit" class="btn">Entrar</button>
+</form>
 
   <!-- Aquí el enlace/botón a registro -->
   <a href="{{ url_for('auth.register') }}" class="link-btn">
