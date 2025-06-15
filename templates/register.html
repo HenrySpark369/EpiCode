@@ -19,10 +19,10 @@
     {% endif %}
   {% endwith %}
 
-  <form method="post" action="{{ url_for('auth.register') }}"> {# Explicitly set action #}
-    {{ csrf_token() }}
-    <label for="username">Usuario:</label>
-    <input type="text" name="username" id="username" placeholder="Tu nombre de usuario" required />
+    <form method="post" action="{{ url_for('auth.register') }}"> {# Explicitly set action #}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="username">Usuario:</label>
+      <input type="text" name="username" id="username" placeholder="Tu nombre de usuario" required />
 
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" placeholder="tu_correo@ejemplo.com" required />
