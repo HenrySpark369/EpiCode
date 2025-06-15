@@ -68,7 +68,7 @@
     .main-container {
       display: flex;
       flex-direction: column;
-      height: 100vh; /* asegúrate de cubrir toda la altura de la ventana */
+      min-height: 100vh; /* asegúrate de cubrir toda la altura de la ventana */
     }
 
     #sidebar {
@@ -76,7 +76,7 @@
       background: var(--color-surface);
       border-right: 1px solid var(--color-border);
       padding: 1rem; /* Added padding here for consistency with original HTML */
-      height: 100vh;
+      min-height: 100vh;
       overflow-y: auto;
     }
     .list-group-item {
@@ -121,9 +121,16 @@
       border: 1px solid var(--color-border);
       border-radius: .25rem;
     }
-    #questionInput::placeholder {
-      color: var(--color-placeholder);
-      opacity: 1;
+    #questionInput {
+      flex: 1;
+      resize: vertical;
+      min-height: 40px;
+      max-height: 150px;
+    }
+
+    #modelSelect, #sendBtn {
+      flex-shrink: 0;
+      margin-left: 0.5rem;
     }
 
     /*—————————————————————————————————————*/
@@ -138,6 +145,9 @@
       border-radius: .5rem;
       max-width: 100%;
       box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem; /* espacio entre mensajes */
     }
     #chatContainer::-webkit-scrollbar {
       width: 8px;
@@ -165,17 +175,15 @@
       position: relative;
     }
     .chat-user {
+      align-self: flex-end;
       background: var(--color-primary);
       color: var(--color-text-on-primary);
-      float: right;
-      margin-right: .5rem;
       text-align: right;
     }
     .chat-bot {
+      align-self: flex-start;
       background: var(--color-surface);
       color: var(--color-text);
-      float: left;
-      margin-left: .5rem;
       text-align: left;
     }
 
@@ -183,28 +191,39 @@
     /* 6) ÁREA DE ENTRADA FIJA             */
     /*—————————————————————————————————————*/
     #inputArea {
-      position: relative;
+      position: fixed;
+      bottom: 0;
       left: var(--sidebar-width);
-      right: 0;
+      width: calc(100% - var(--sidebar-width));
       background: var(--color-input-bg);
       color: var(--color-text);
       border-top: 1px solid var(--color-border);
       padding: 0.75rem 1rem;
       z-index: 1000;
-      flex-shrink: 0;
+
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: 0.5rem;
+      box-sizing: border-box;
     }
 
     #inputArea .form-control {
-    resize: vertical;
-    min-height: 40px;
-    max-height: 150px;
-    line-height: 1.4;
-    padding: 0.5rem 0.75rem;
+      flex: 1;
+      resize: vertical;
+      min-height: 40px;
+      max-height: 150px;
+      line-height: 1.4;
+      padding: 0.5rem 0.75rem;
     }
 
-    #inputArea .form-select,
+    #inputArea .form-select{
+      max-width: 140px;
+    }
     #inputArea .btn {
+      flex-shrink: 0;
       color: var(--color-text) !important;
+      white-space: nowrap;
     }
 
     /*—————————————————————————————————————*/
@@ -322,6 +341,14 @@
 
       #inputArea {
         left: 0 !important;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      #inputArea .form-select,
+      #inputArea .btn {
+        width: 100%;
       }
 
       /* Oscurecer fondo opcional cuando el sidebar está abierto */
@@ -331,7 +358,7 @@
         top: 0;
         left: 0;
         width: 100vw;
-        height: 100vh;
+        min-height: 100vh;
         background: rgba(0,0,0,0.5);
         z-index: 1049;
       }
@@ -381,38 +408,23 @@
       <ul id="convList" class="list-group"></ul>
     </aside>
 
-    <div class="main-container d-flex flex-column flex-grow-1 w-100" style="height: 100vh;">
-  <div class="container py-3">
-    <h1 class="mb-3 text-center">EpiCode ⚛️</h1>
-    
-    <div class="flash-messages">...</div>
+  <div class="main-container d-flex flex-column flex-grow-1 w-100">
+    <h1 class="text-center my-3">EpiCode ⚛️</h1>
+    <div id="chatContainer"></div>
   </div>
 
-  <div id="chatContainer" class="flex-grow-1 overflow-auto px-4"></div>
-
-  <div id="inputArea" class="container py-3">
-    <div class="d-flex align-items-start g-2">
-      <textarea
-        id="questionInput"
-        class="form-control me-2"
-        rows="2"
-        placeholder="Escribe tu pregunta de programación…"
-      ></textarea>
-      <div class="d-flex flex-column">
-        <select id="modelSelect" class="form-select form-select-sm mb-1" style="width: auto; min-width: 120px;">
-          {% for m in models %}
+  <div id="inputArea">
+    <textarea id="questionInput" class="form-control" rows="2" placeholder="Escribe tu pregunta…"></textarea>
+    <select id="modelSelect" class="form-select form-select-sm">
+      {% for m in models %}
             <option value="{{ m }}"
               {% if m==default_model %}selected{% endif %}>
               {{ m }}
             </option>
           {% endfor %}
-        </select>
-        <button id="sendBtn" class="btn btn-primary btn-sm">
-          Enviar
-        </button>
-      </div>
-    </div>
-    <div id="statusMsg" class="mt-2 text-muted small"></div>
+    </select>
+    <button id="sendBtn" class="btn btn-primary btn-sm">Enviar</button>
+    <div id="statusMsg" class="text-muted small mt-2 ps-1"></div>
   </div>
 </div>
 
