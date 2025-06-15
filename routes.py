@@ -1,7 +1,5 @@
-# routes.py
-
 import os
-# import openai                                    # comentado para aislar C-extension
+import openai                                    # para capturar openai.BadRequestError
 from flask import (
     request, jsonify, render_template,
     current_app, Response, stream_with_context,
@@ -9,23 +7,7 @@ from flask import (
 )
 from flask_login import login_required, current_user
 from models import db, Conversation, Message, RoleEnum, User
-# from openai import OpenAI
-
-# Stub OpenAI to avoid NameError during isolation
-class OpenAI:
-    def __init__(self, api_key=None):
-        pass
-
-    @property
-    def responses(self):
-        class Dummy:
-            def create(self, **kwargs):
-                class R:
-                    output_text = ""
-                    status = None
-                    incomplete_details = None
-                return R()
-        return Dummy()
+from openai import OpenAI
 from decorators import admin_required
 
 MAX_TURNOS = 6
@@ -88,7 +70,9 @@ def init_app(app_instance):
 
             return jsonify({"answer": contenido, "truncated": truncated})
 
-
+        except openai.BadRequestError as e:
+            current_app.logger.error("BadRequest en /api/ask: %s", e, exc_info=True)
+            return jsonify({"error": e._message}), 400
         except Exception as e:
             current_app.logger.error("Error en /api/ask: %s", e, exc_info=True)
             return jsonify({"error": "Error interno del servidor. Revisa los registros."}), 500
@@ -218,8 +202,8 @@ def init_app(app_instance):
         all_msgs = Message.query.filter_by(conversation_id=conv.id)\
                                 .order_by(Message.turn_index.asc())\
                                 .all()
-        system_msg = next((m for m in all_msgs if m.role==RoleEnum.system), None)
-        history    = [m for m in all_msgs if m.role!=RoleEnum.system][-MAX_TURNOS:]
+        system_msg = next((m for m in all_msgs if m.role == RoleEnum.system), None)
+        history    = [m for m in all_msgs if m.role != RoleEnum.system][-MAX_TURNOS:]
 
         payload = []
         if system_msg:
