@@ -21,11 +21,15 @@ let currentConvId = null;          // ID of the active conversation
 
 // Añade esta función justo antes de tu listener de sendBtn
 async function sendWithStream(convId, pregunta, model) {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
   const res = await fetch(
     `/api/conversations/${convId}/messages/stream`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrfToken
+      },
       body: JSON.stringify({ content: pregunta, model })
     }
   );
