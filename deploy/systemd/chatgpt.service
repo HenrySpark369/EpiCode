@@ -1,0 +1,14 @@
+[Unit]
+Description=ChatGPT Flask Application
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/path/to/your/project   ; replace with full path
+ExecStart=/usr/local/bin/gunicorn --config /path/to/your/project/gunicorn_conf.py manage:create_app()
+Restart=on-failure
+EnvironmentFile=/path/to/your/project/.env   ; replace with full path
+
+[Install]
+WantedBy=multi-user.target

@@ -6,9 +6,9 @@ from functools import wraps # Only needed if you have custom decorators here, ot
 
 from flask import Flask, abort # abort might not be used here anymore, can remove if so
 from flask.cli import with_appcontext
-from flask_sqlalchemy import SQLAlchemy # This import can be removed, as db is imported from models
+# from flask_sqlalchemy import SQLAlchemy # This import can be removed, as db is imported from models
 from flask_migrate import Migrate
-from dotenv import load_dotenv
+import config
 from flask_login import LoginManager, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -19,7 +19,6 @@ from auth import auth_bp
 
 from wtforms.fields import Field
 
-load_dotenv(override=True)
 
 migrate = Migrate()
 login_manager = LoginManager()
@@ -94,18 +93,9 @@ class SecureModelView(ModelView):
 def create_app():
     app = Flask(__name__)
 
-    # --- Configuración desde .env ---
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "cambia_esto")
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URL",
-        "postgresql://usuario:clave@localhost:5432/chatgpt_db"
-    )
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["ALLOWED_MODELS"] = [
-        "chatgpt-4o-latest", "o4-mini", "gpt-4o-mini-2024-07-18"
-    ]
-    app.config["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-    # ---------------------------------
+    # Carga de configuración según entorno
+    env = os.getenv("FLASK_ENV", "development")
+    app.config.from_object(config.config[env])
 
     db.init_app(app)
     migrate.init_app(app, db)

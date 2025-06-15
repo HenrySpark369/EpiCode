@@ -1,7 +1,7 @@
 # routes.py
 
 import os
-import openai                                    # para capturar openai.BadRequestError
+# import openai                                    # comentado para aislar C-extension
 from flask import (
     request, jsonify, render_template,
     current_app, Response, stream_with_context,
@@ -9,7 +9,23 @@ from flask import (
 )
 from flask_login import login_required, current_user
 from models import db, Conversation, Message, RoleEnum, User
-from openai import OpenAI
+# from openai import OpenAI
+
+# Stub OpenAI to avoid NameError during isolation
+class OpenAI:
+    def __init__(self, api_key=None):
+        pass
+
+    @property
+    def responses(self):
+        class Dummy:
+            def create(self, **kwargs):
+                class R:
+                    output_text = ""
+                    status = None
+                    incomplete_details = None
+                return R()
+        return Dummy()
 from decorators import admin_required
 
 MAX_TURNOS = 6
@@ -72,9 +88,7 @@ def init_app(app_instance):
 
             return jsonify({"answer": contenido, "truncated": truncated})
 
-        except openai.BadRequestError as e:
-            current_app.logger.error("BadRequest en /api/ask: %s", e, exc_info=True)
-            return jsonify({"error": e._message}), 400
+
         except Exception as e:
             current_app.logger.error("Error en /api/ask: %s", e, exc_info=True)
             return jsonify({"error": "Error interno del servidor. Revisa los registros."}), 500
