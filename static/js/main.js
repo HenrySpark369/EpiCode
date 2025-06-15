@@ -196,7 +196,12 @@ async function selectConversation(id) {
 async function newConversation() {
   document.getElementById("statusMsg").textContent = "Creando nueva conversación...";
   try {
-    const response = await axios.post("/api/conversations");
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    const response = await axios.post("/api/conversations", null, {
+      headers: {
+        "X-CSRFToken": csrfToken
+      }
+    });
     const newConvId = response.data.id;
 
     // Reload conversations to get the new one and its correct order
