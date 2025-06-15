@@ -1,0 +1,124 @@
+/* Shared CSS for login.html and register.html based on index.html styles */
+
+/*—————————————————————————————————————*/
+/* 1) PALETA DE COLORES               */
+/*—————————————————————————————————————*/
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f1f3f5;
+  --color-text: #212529;
+  --color-primary: #0d6efd;
+  --color-primary-rgb: 13,110,253;
+  --color-text-on-primary: #ffffff;
+  --color-border: #dee2e6;
+  --color-input-bg: #f8f9fa;
+  --color-placeholder: #6c757d;        /* gris medio para light */
+}
+[data-theme="dark"] {
+  --color-bg: #121212;
+  --color-surface: #1e1e1e;
+  --color-text: #e0e0e0;
+  --color-primary: #90caf9;
+  --color-primary-rgb: 144,202,249;
+  --color-text-on-primary: #000000;
+  --color-border: #333333;
+  --color-input-bg: #2c2c2c;
+  --color-placeholder: #767676;        /* gris claro para dark */
+}
+
+/*—————————————————————————————————————*/
+/* 2) TRANSICIONES SUAVES              */
+/*—————————————————————————————————————*/
+* {
+  transition: background-color .25s ease,
+              color .25s ease,
+              border-color .25s ease;
+}
+
+/*—————————————————————————————————————*/
+/* 3) ESTILOS GLOBALES                  */
+/*—————————————————————————————————————*/
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: sans-serif;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2em 1em;
+  overflow-x: hidden;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+label, input, button, .link-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: .5em;
+}
+
+input {
+  padding: .5em;
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: .25rem;
+  box-sizing: border-box;
+}
+
+button, .link-btn {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  padding: .5em;
+  text-align: center;
+  cursor: pointer;
+  border-radius: .25rem;
+  text-decoration: none;
+}
+
+button:hover, .link-btn:hover {
+  opacity: 0.9;
+}
+
+.flash {
+  padding: .5em;
+  margin-bottom: 1em;
+  border-radius: 4px;
+  width: auto;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+/*—————————————————————————————————————*/
+/* 4) MOBILE RESPONSIVE STYLES          */
+/*—————————————————————————————————————*/
+@media (max-width: 768px) {
+  body {
+    max-width: 100%;
+    padding: 1em;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  label, input, button, .link-btn {
+    font-size: 1rem;
+  }
+  input {
+    padding: .75em;
+  }
+  button, .link-btn {
+    padding: .75em;
+  }
+}
