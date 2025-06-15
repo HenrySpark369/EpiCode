@@ -404,6 +404,7 @@
             </a>
           {% endif %}
           <form action="{{ url_for('auth.logout') }}" method="post" style="display: block;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <button type="submit" class="btn btn-sm btn-secondary logout-btn">
               Cerrar Sesión
             </button>
