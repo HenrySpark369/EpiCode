@@ -16,10 +16,13 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin.actions import action
 from models import db, User 
 import routes 
-from auth import auth_bp, csrf
+from auth import init_app, auth_bp
 
 from wtforms.fields import Field
 
+from flask_wtf.csrf import CSRFProtect
+
+csrf = CSRFProtect()
 
 migrate = Migrate()
 login_manager = LoginManager()
@@ -110,7 +113,7 @@ def create_app():
 
     logging.basicConfig(level=logging.DEBUG)
 
-    app.register_blueprint(auth_bp)
+    init_app(app)
 
     # Initialize your main application routes AFTER the blueprint
     # This ensures that any `url_for` calls within 'routes' for 'auth.login' work correctly.

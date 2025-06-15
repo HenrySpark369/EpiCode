@@ -28,7 +28,8 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     DEBUG = False
-
+    SESSION_COOKIE_SECURE = True
+    WTF_CSRF_SSL_STRICT = True
 config = {
     "development": DevelopmentConfig,
     "testing": TestingConfig,

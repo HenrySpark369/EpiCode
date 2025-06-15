@@ -18,17 +18,16 @@
     {% endif %}
   {% endwith %}
 
-<form action="" method="post">
-  {{ csrf_token() }}
-  <input type="hidden" name="next" value="{{ request.args.get('next') or request.form.get('next') }}">
+<form method="post" action="">
+  {{ form.hidden_tag() }}
 
   <label for="username">Usuario</label>
-  <input type="text" name="username" id="username" required autofocus />
+  {{ form.username(size=32, id="username", autofocus=True) }}
 
   <label for="password">Contraseña</label>
-  <input type="password" name="password" id="password" required />
+  {{ form.password(size=32, id="password") }}
 
-  <button type="submit" class="btn">Entrar</button>
+  {{ form.submit(class_="btn") }}
 </form>
 
   <!-- Aquí el enlace/botón a registro -->

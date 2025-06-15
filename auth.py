@@ -2,7 +2,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required # Add current_user if needed for admin_required
 from models import User, db # Import db and User
-from flask_wtf import CSRFProtect
+from flask_wtf import CSRFProtect, FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired
 
 # If you have an admin_required decorator, it should ideally be in a separate decorators.py
 # If it's not, you might need to import it here.
@@ -13,6 +15,15 @@ from urllib.parse import urlparse, urljoin
 
 
 csrf = CSRFProtect()
+
+def init_app(app):
+    csrf.init_app(app)
+    app.register_blueprint(auth_bp)
+
+class LoginForm(FlaskForm):
+    username = StringField('Usuario', validators=[DataRequired()])
+    password = PasswordField('Contraseña', validators=[DataRequired()])
+    submit = SubmitField('Entrar')
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -56,9 +67,10 @@ def login():
     if current_user.is_authenticated: # Prevent authenticated users from seeing login
         return redirect(url_for('index')) # Assuming 'index' is your main authenticated route
 
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
         user = User.query.filter_by(username=username).first()
 
         if user is None or not user.check_password(password):
@@ -76,7 +88,7 @@ def login():
             return redirect(next_page)
         else:
             return redirect(url_for("index"))
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 @auth_bp.route('/logout', methods=['POST'])
 @login_required # Only logged in users can log out
