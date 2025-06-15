@@ -9,7 +9,12 @@ from flask.cli import with_appcontext
 # from flask_sqlalchemy import SQLAlchemy # This import can be removed, as db is imported from models
 from flask_migrate import Migrate
 
-import config
+import importlib.util
+import sys
+
+spec = importlib.util.spec_from_file_location("app_config", "./config.py")
+app_config = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(app_config)
 from flask_login import LoginManager, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -99,8 +104,7 @@ def create_app():
 
     # Carga de configuración según entorno
     env = os.getenv("FLASK_ENV", "development")
-    app.config.from_object(config.config[env])
-
+    app.config.from_object(app_config.config[env])
     db.init_app(app)
     migrate.init_app(app, db)
 

@@ -1,0 +1,144 @@
+{
+  "models": {
+    "gpt-4.1-mini-2025-04-14": {
+      "category": "balanced",
+      "intelligence": "balanced",
+      "speed": "balanced",
+      "pricing_per_1m_tokens": {
+        "input": 0.40,
+        "cached_input": 0.10,
+        "output": 1.60
+      },
+      "context_window": 1048576,
+      "max_output_tokens": 32768,
+      "knowledge_cutoff": "2024-05-31",
+      "endpoints": [
+        "v1/chat/completions",
+        "v1/responses",
+        "v1/realtime",
+        "v1/assistants",
+        "v1/batch",
+        "v1/fine-tuning",
+        "v1/embeddings",
+        "v1/images/generations",
+        "v1/images/edits",
+        "v1/audio/speech",
+        "v1/audio/transcriptions",
+        "v1/audio/translations",
+        "v1/moderations",
+        "v1/completions"
+      ],
+      "supported_features": [
+        "streaming",
+        "function_calling",
+        "structured_outputs",
+        "fine_tuning",
+        "distillation",
+        "predicted_outputs",
+        "inpainting",
+        "image_input"
+      ],
+      "rate_limits_tpm": {
+        "free": 40000,
+        "tier_1": 200000,
+        "tier_2": 2000000,
+        "tier_3": 4000000,
+        "tier_4": 10000000,
+        "tier_5": 150000000
+      }
+    },
+    "o4-mini-2025-04-16": {
+      "category": "reasoning",
+      "intelligence": "high",
+      "speed": "fast",
+      "pricing_per_1m_tokens": {
+        "input": 1.10,
+        "cached_input": 0.28,
+        "output": 4.40
+      },
+      "context_window": 200000,
+      "max_output_tokens": 100000,
+      "knowledge_cutoff": "2024-05-31",
+      "endpoints": [
+        "v1/chat/completions",
+        "v1/responses",
+        "v1/realtime",
+        "v1/assistants",
+        "v1/batch",
+        "v1/fine-tuning",
+        "v1/embeddings",
+        "v1/images/generations",
+        "v1/images/edits",
+        "v1/audio/speech",
+        "v1/audio/transcriptions",
+        "v1/audio/translations",
+        "v1/moderations",
+        "v1/completions"
+      ],
+      "supported_features": [
+        "streaming",
+        "function_calling",
+        "structured_outputs",
+        "fine_tuning",
+        "distillation",
+        "predicted_outputs",
+        "inpainting",
+        "image_input"
+      ],
+      "rate_limits_tpm": {
+        "tier_1": 100000,
+        "tier_2": 200000,
+        "tier_3": 4000000,
+        "tier_4": 10000000,
+        "tier_5": 150000000
+      }
+    },
+    "chatgpt-4o-latest": {
+      "category": "reasoning",
+      "intelligence": "high",
+      "speed": "fast",
+      "pricing_per_1m_tokens": {
+        "input": 5.00,
+        "cached_input": 0,
+        "output": 15.00
+      },
+      "context_window": 128000,
+      "max_output_tokens": 16384,
+      "knowledge_cutoff": "2023-09-30",
+      "endpoints": [
+        "v1/chat/completions",
+        "v1/responses",
+        "v1/realtime",
+        "v1/assistants",
+        "v1/batch",
+        "v1/fine-tuning",
+        "v1/embeddings",
+        "v1/images/generations",
+        "v1/images/edits",
+        "v1/audio/speech",
+        "v1/audio/transcriptions",
+        "v1/audio/translations",
+        "v1/moderations",
+        "v1/completions"
+      ],
+      "supported_features": [
+        "streaming",
+        "function_calling",
+        "structured_outputs",
+        "fine_tuning",
+        "distillation",
+        "predicted_outputs",
+        "inpainting",
+        "image_input"
+      ],
+      "rate_limits_tpm": {
+        "tier_1": 30000,
+        "tier_2": 450000,
+        "tier_3": 800000,
+        "tier_4": 2000000,
+        "tier_5": 30000000
+      }
+    }
+  },
+  "last_updated": "2025-06-15"
+}

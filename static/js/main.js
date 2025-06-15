@@ -110,7 +110,12 @@ async function saveConversationTitle(convId, newTitle) {
 async function deleteConversation(convId) {
   if (!confirm("¿Seguro que quieres borrar esta conversación?")) return;
   try {
-    await axios.delete(`/api/conversations/${convId}`);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    await axios.delete(`/api/conversations/${convId}`, {
+      headers: {
+        "X-CSRFToken": csrfToken
+      }
+    });
     // Si borramos la conversación activa, limpiamos el chat
     if (currentConvId === convId) {
       currentConvId = null;

@@ -12,10 +12,17 @@ from decorators import admin_required
 
 MAX_TURNOS = 6
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "config")))
+
+from model_utils import ModelConfig
+from middleware import model_constraints_middleware
 def init_app(app_instance):
     # Configura cliente OpenAI y modelos permitidos
     client = OpenAI(api_key=app_instance.config.get("OPENAI_API_KEY"))
-    ALLOWED_MODELS = app_instance.config.get("ALLOWED_MODELS", [])
+    model_config = ModelConfig()
+    ALLOWED_MODELS = list(model_config.models.keys())
 
     # Ruta pública
     @app_instance.route("/")
@@ -30,13 +37,11 @@ def init_app(app_instance):
     # Endpoint genérico de ask (requiere login)
     @app_instance.route("/api/ask", methods=["POST"])
     @login_required
+    @model_constraints_middleware
     def ask():
         data = request.get_json()
         mensajes = data.get("messages", [])
         model = data.get("model", "chatgpt-4o-latest")
-
-        if model not in ALLOWED_MODELS:
-            return jsonify({"error": f"Modelo no permitido: {model}"}), 400
 
         if not mensajes or mensajes[0].get("role") != "system":
             mensajes.insert(0, {
