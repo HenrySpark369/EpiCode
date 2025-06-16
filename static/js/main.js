@@ -97,7 +97,12 @@ async function loadConversations() {
  */
 async function saveConversationTitle(convId, newTitle) {
   try {
-    await axios.patch(`/api/conversations/${convId}`, { title: newTitle });
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    await axios.patch(`/api/conversations/${convId}`, { title: newTitle }, {
+      headers: {
+        "X-CSRF-Token": csrfToken
+      }
+    });
     // After renaming, refresh the list to show the new title
     await loadConversations();
   } catch (error) {
