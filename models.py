@@ -22,6 +22,8 @@ class User(db.Model, UserMixin):
     conversations = db.relationship("Conversation", back_populates="user", cascade="all, delete-orphan")
     is_approved = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
+    reset_token = db.Column(db.String(256), nullable=True)
+    reset_token_expiration = db.Column(db.DateTime, nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

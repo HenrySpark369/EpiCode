@@ -19,6 +19,14 @@ class BaseConfig:
     ).split(",")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+    # Configuración para correo electrónico
+    MAIL_SERVER = os.getenv("MAIL_SERVER", "")
+    MAIL_PORT = int(os.getenv("MAIL_PORT", 25))
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME", "")
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD", "")
+    MAIL_USE_TLS = os.getenv("MAIL_USE_TLS", "False").lower() in ("true", "1", "t")
+    MAIL_USE_SSL = os.getenv("MAIL_USE_SSL", "False").lower() in ("true", "1", "t")
+
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
 
