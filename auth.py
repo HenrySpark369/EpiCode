@@ -73,9 +73,9 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        username = form.username.data
+        username_or_email = form.username.data
         password = form.password.data
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter((User.username == username_or_email) | (User.email == username_or_email)).first()
 
         if user is None or not user.check_password(password):
             flash("Credenciales inválidas", "error")
