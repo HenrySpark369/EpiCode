@@ -60,6 +60,16 @@ label, input, button, .link-btn {
   margin-bottom: .5em;
 }
 
+/* Desktop: limit input, textarea, select width to 50% and center */
+@media (min-width: 769px) {
+  label, input, textarea, select, button, .link-btn {
+    max-width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+}
+
 input, textarea, select {
   padding: .5em;
   background: var(--color-input-bg);
@@ -91,6 +101,16 @@ button, .link-btn {
 
 button:hover, .link-btn:hover {
   opacity: 0.9;
+}
+
+/* Desktop: limit button width to 50% and center */
+@media (min-width: 769px) {
+  button, .link-btn {
+    max-width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
 }
 
 .btn-primary {
@@ -331,9 +351,46 @@ p a.link-btn:hover {
   border: none;
   cursor: pointer;
   width: 100%;
+  max-width: 3rem;
   text-align: center;
 }
 
 #themeToggle:hover {
   opacity: 0.9;
+}
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 1rem;
+  box-sizing: border-box;
+  text-align: center;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.center-container form, .center-container h2, .center-container a.link-btn {
+  width: 100%;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Uniformizar anchos de inputs, botones y enlaces en desktop */
+@media (min-width: 769px) {
+  .center-container form label,
+  .center-container form input,
+  .center-container form textarea,
+  .center-container form select,
+  .center-container form button,
+  .center-container a.link-btn {
+    max-width: 100%;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    display: block;
+  }
 }

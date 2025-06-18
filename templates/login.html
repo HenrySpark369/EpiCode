@@ -7,42 +7,43 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/shared.css') }}" />
 </head>
 <body>
+  <div class="center-container">
 
-  <h1>Iniciar sesión</h1>
+    <h1>Iniciar sesión</h1>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, msg in messages %}
-        <div class="flash {{ category }}">{{ msg }}</div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-<form method="post" action="">
-  {{ form.hidden_tag() }}
+    <form method="post" action="">
+      {{ form.hidden_tag() }}
 
-  <label for="username">Usuario o correo electrónico</label>
-  {{ form.username(size=32, id="username", autofocus=True) }}
+      <label for="username">Usuario o correo electrónico</label>
+      {{ form.username(size=32, id="username", autofocus=True) }}
 
-  <label for="password">Contraseña</label>
-  {{ form.password(size=32, id="password") }}
+      <label for="password">Contraseña</label>
+      {{ form.password(size=32, id="password") }}
 
-  {{ form.submit(class_="btn") }}
-</form>
+      {{ form.submit(class_="btn") }}
+    </form>
 
-  <!-- Aquí el enlace/botón a registro -->
-  <a href="{{ url_for('auth.register') }}" class="link-btn">
-    ¿No tienes cuenta? Regístrate
-  </a>
+    <!-- Aquí el enlace/botón a registro -->
+    <a href="{{ url_for('auth.register') }}" class="link-btn">
+      ¿No tienes cuenta? Regístrate
+    </a>
 
-  <a href="{{ url_for('auth.reset_password_request') }}" class="link-btn" style="display:block; margin-top: 10px;">
-    ¿Olvidaste tu contraseña?
-  </a>
+    <a href="{{ url_for('auth.reset_password_request') }}" class="link-btn" style="display:block; margin-top: 10px;">
+      ¿Olvidaste tu contraseña?
+    </a>
 
-  <button id="themeToggle" type="button" class="btn btn-sm btn-secondary mt-3 w-100">
-    Cambiar tema
-  </button>
-  </style>
+    <button id="themeToggle" type="button" class="btn btn-sm btn-secondary mt-3 w-100">
+      Cambiar tema
+    </button>
+  </div>
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
