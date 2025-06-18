@@ -131,6 +131,48 @@ form {
   margin-top: 1em;
 }
 
+/* Sidebar conversation list item layout */
+#convList .list-group-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  height: 3.5rem;
+  box-sizing: border-box;
+}
+
+#convList .list-group-item span {
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+#convList .list-group-item button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+#convList .list-group-item .btn-link {
+  color: inherit;
+}
+
+#convList .list-group-item .btn-link:hover {
+  color: var(--color-primary);
+}
+
+/* Container for buttons row */
+#convList .list-group-item .btn-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: auto;
+  align-items: center;
+}
+
 form label {
   margin-top: 1em;
   font-weight: 600;

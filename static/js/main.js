@@ -152,13 +152,18 @@ function renderConversationList() {
     li.className = "list-group-item list-group-item-action";
     if (conv.id === currentConvId) li.classList.add("active");
 
-    const titleSpan = document.createElement("span");
-    titleSpan.textContent = conv.title;
-    titleSpan.className = "flex-grow-1"; // Allow title to take space
+    // Create container for title and buttons in two rows
+    const titleDiv = document.createElement("div");
+    titleDiv.style.alignSelf = "flex-start";
+    titleDiv.textContent = conv.title;
+    titleDiv.style.fontWeight = "600";
 
-    // Optional: Add a rename button/icon (e.g., Bootstrap icon)
+    const btnRow = document.createElement("div");
+    btnRow.className = "btn-row";
+
+    // Rename button
     const renameBtn = document.createElement("button");
-    renameBtn.className = "btn btn-sm btn-link p-0 ms-auto";
+    renameBtn.className = "btn btn-sm btn-link p-0";
     renameBtn.innerHTML = '✏️'; // Pencil icon
     renameBtn.title = "Renombrar";
     renameBtn.onclick = (e) => {
@@ -169,7 +174,7 @@ function renderConversationList() {
       }
     };
 
-    // Borrar
+    // Delete button
     const delBtn = document.createElement("button");
     delBtn.className = "btn btn-sm btn-link text-danger p-0";
     delBtn.innerHTML = "🗑️";
@@ -179,9 +184,11 @@ function renderConversationList() {
       deleteConversation(conv.id);
     };
 
-    li.appendChild(titleSpan);
-    li.appendChild(renameBtn);
-    li.appendChild(delBtn);
+    btnRow.appendChild(renameBtn);
+    btnRow.appendChild(delBtn);
+
+    li.appendChild(titleDiv);
+    li.appendChild(btnRow);
 
     li.onclick = () => selectConversation(conv.id);
     ul.appendChild(li);
