@@ -32,8 +32,9 @@
       --color-border: #dee2e6;
       --color-input-bg: #f8f9fa;
       --color-placeholder: #6c757d;        /* gris medio para light */
-      --sidebar-width: 200px;
-      --input-height: 0px;
+      --sidebar-width: 250px;
+      --header-height: 60px;
+      --input-height: 70px;
     }
     [data-theme="dark"] {
       --color-bg: #121212;
@@ -65,92 +66,115 @@
       color: var(--color-text);
       font-family: sans-serif;
       overflow-x: hidden;
-    }
-    
-    .main-container {
+      height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh; /* asegúrate de cubrir toda la altura de la ventana */
     }
 
+    /* Layout container */
+    .app-container {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
     #sidebar {
       width: var(--sidebar-width);
       background: var(--color-surface);
       border-right: 1px solid var(--color-border);
-      padding: 1rem; /* Added padding here for consistency with original HTML */
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
       min-height: 100vh;
+      box-sizing: border-box;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
       overflow-y: auto;
+      z-index: 1050;
+      transition: transform 0.3s ease;
+      transform: translateX(0);
     }
-    .list-group-item {
-      background: var(--color-input-bg);
-      color: var(--color-text);
-      border: 1px solid var(--color-border);
-      margin-bottom: .25rem;
+    #sidebar.hidden {
+      transform: translateX(calc(-1 * var(--sidebar-width)));
     }
-    .btn {
-      display: inline-block;
+
+    /* Sidebar header area */
+    .user-info {
       padding: .5rem 1rem;
-      background: var(--color-surface);
+      font-weight: bold;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 1rem;
       color: var(--color-text);
-      border: 1px solid var(--color-border);
-      border-radius: .25rem;
+      text-align: center;
+    }
+    .logout-btn {
+      margin-top: 1rem;
+      width: 100%;
+    }
+    .admin-link {
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+
+    /* Main content area */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: calc(100% - var(--sidebar-width));
+      box-sizing: border-box;
+    }
+
+    /* Header */
+    header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      box-sizing: border-box;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 0 1rem;
+    }
+    #toggleSidebarBtn {
+      background: var(--color-primary);
+      color: var(--color-text-on-primary);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
       cursor: pointer;
+      font-size: 1.25rem;
+      display: none;
     }
-    .btn:hover {
-      opacity: .9;
-    }
-    .btn:focus {
+    #toggleSidebarBtn:focus {
       outline: 2px solid var(--color-primary);
       outline-offset: 2px;
     }
-    .btn-primary {
-      background: var(--color-primary);
-      border-color: var(--color-primary);
-      color: var(--color-text-on-primary);
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      user-select: none;
     }
-    .btn-secondary {
-      background: var(--color-surface);
-      border-color: var(--color-border);
-      color: var(--color-text);
-    }
-    .form-control,
-    .form-select {
-      display: block;
-      width: 100%;
-      padding: .5rem;
-      background: var(--color-input-bg);
-      color: var(--color-text);
-      border: 1px solid var(--color-border);
-      border-radius: .25rem;
-    }
-    #questionInput {
-      flex: 1;
-      resize: vertical;
-      min-height: 40px;
-      max-height: 150px;
+    #modelSelect {
+      max-width: 200px;
+      margin-left: 1rem;
     }
 
-    #modelSelect, #sendBtn {
-      flex-shrink: 0;
-      margin-left: 0.5rem;
-    }
-
-    /*—————————————————————————————————————*/
-    /* 4) CONTENEDOR DE CHAT               */
-    /*—————————————————————————————————————*/
+    /* Chat container */
     #chatContainer {
       flex-grow: 1;
       overflow-y: auto;
-      padding: 1.5rem;
-      padding-bottom: var(--input-height);
+      padding: 1rem;
       background: var(--color-bg);
-      border: 1px solid var(--color-border);
-      border-radius: .5rem;
-      max-width: 100%;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem; /* espacio entre mensajes */
+      gap: 0.75rem;
     }
     #chatContainer::-webkit-scrollbar {
       width: 8px;
@@ -160,14 +184,9 @@
       border-radius: 4px;
     }
 
-    /*—————————————————————————————————————*/
-    /* 5) MENSAJES DE CHAT                 */
-    /*—————————————————————————————————————*/
+    /* Chat messages */
     .chat-message {
-      display: inline-block;
-      clear: both;
       max-width: 60%;
-      min-width: 10%;
       padding: .75rem 1rem;
       margin-bottom: .75rem;
       border-radius: 1rem;
@@ -190,81 +209,67 @@
       text-align: left;
     }
 
-    /*—————————————————————————————————————*/
-    /* 6) ÁREA DE ENTRADA FIJA             */
-    /*—————————————————————————————————————*/
+    /* Input area */
     #inputArea {
-      position: fixed;
-      bottom: 0;
-      left: var(--sidebar-width);
-      width: calc(100% - var(--sidebar-width));
+      height: var(--input-height);
       background: var(--color-input-bg);
-      color: var(--color-text);
       border-top: 1px solid var(--color-border);
-      padding: 0.75rem 1rem;
-      z-index: 1000;
-
+      padding: 0.5rem 1rem;
       display: flex;
-      flex-direction: row;
-      align-items: flex-end;
+      align-items: center;
       gap: 0.5rem;
       box-sizing: border-box;
     }
-
-    #inputArea .form-control {
+    #questionInput {
       flex: 1;
       resize: vertical;
       min-height: 40px;
       max-height: 150px;
       line-height: 1.4;
       padding: 0.5rem 0.75rem;
+      border-radius: 0.25rem;
+      border: 1px solid var(--color-border);
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+    #modelSelect, #sendBtn {
+      flex-shrink: 0;
+    }
+    #sendBtn {
+      padding: 0.5rem 1rem;
     }
 
-    #inputArea .form-select{
-      max-width: 140px;
-    }
-    #inputArea .btn {
-      flex-shrink: 0;
-      color: var(--color-text) !important;
+    /* Status and token info */
+    #statusMsg,
+    .statusMsg,
+    #tokenInfo {
+      font-size: 0.85rem;
+      color: var(--color-text);
+      margin-left: 0.5rem;
       white-space: nowrap;
     }
 
-    /*—————————————————————————————————————*/
-    /* 7) ESTILO PARA MENSAJES DE ESTADO  */
-    /*—————————————————————————————————————*/
-    #statusMsg,
-    .statusMsg,
-    #inputArea .text-muted {
-      display: block;
-      margin-top: .5rem;
-      font-size: .875rem;
-      color: var(--color-text) !important;
-    }
-
-    /* Flash message styles (copied from login.html for consistency) */
+    /* Flash messages */
     .flash-messages {
       margin-bottom: 1em;
       text-align: center;
     }
     .flash {
       padding: .5em;
-      margin-bottom: .5em; /* Reduced margin to fit better */
+      margin-bottom: .5em;
       border-radius: 4px;
-      display: block; /* Ensure it takes full width */
+      display: block;
       width: auto;
-      max-width: 600px; /* Limit width for better readability */
+      max-width: 600px;
       margin-left: auto;
       margin-right: auto;
     }
     .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; } /* Added success style */
-    .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }    /* Added info style */
+    .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
 
-
-    /*—————————————————————————————————————*/
-    /* 8) HIGHLIGHT.JS & CÓDIGO             */
-    /*—————————————————————————————————————*/
+    /* Highlight.js & code */
     pre, code {
       max-width: 100%;
       white-space: pre-wrap;
@@ -283,9 +288,7 @@
     .hljs-string,
     .hljs-title          { color: #ce9178; }
 
-    /*—————————————————————————————————————*/
-    /* 9) OVERRIDES PARA BOOTSTRAP FOCUS   */
-    /*—————————————————————————————————————*/
+    /* Bootstrap focus overrides */
     .form-control:focus,
     .form-select:focus {
       background-color: var(--color-input-bg) !important;
@@ -295,9 +298,7 @@
       outline: none;
     }
 
-    /*—————————————————————————————————————*/
-    /* 10) LIST‐GROUP EN DARK THEMING      */
-    /*—————————————————————————————————————*/
+    /* List-group dark theming */
     [data-theme="dark"] .list-group-item {
       background: var(--color-input-bg) !important;
       color: var(--color-text)  !important;
@@ -310,24 +311,7 @@
       border-color: var(--color-primary) !important;
     }
 
-    /* Styles for the user info in sidebar */
-    .user-info {
-      padding: .5rem 1rem;
-      font-weight: bold;
-      border-bottom: 1px solid var(--color-border);
-      margin-bottom: 1rem;
-      color: var(--color-text);
-    }
-    .logout-btn {
-        margin-top: 1rem;
-        width: 100%;
-    }
-    .admin-link {
-        margin-top: 0.5rem;
-        width: 100%;
-    }
-
-    /* Overlay para off-canvas mobile */
+    /* Overlay for mobile sidebar */
     #overlay {
       display: none;
       position: fixed;
@@ -339,61 +323,74 @@
       display: block;
     }
 
+    /* Responsive styles */
     @media (max-width: 768px) {
-      .d-flex {
-        flex-direction: column !important;
+      #toggleSidebarBtn {
+        display: block;
       }
       #sidebar {
         position: fixed;
         top: 0;
-        left: -220px; /* Oculto fuera de pantalla */
-        width: 200px;
-        height: 100%;
-        background: var(--color-surface);
+        left: 0;
+        bottom: 0;
+        transform: translateX(calc(-1 * var(--sidebar-width)));
         z-index: 1050;
-        transition: left 0.3s ease;
+        transition: transform 0.3s ease;
+        width: var(--sidebar-width);
       }
       #sidebar.active {
-        left: 0; /* Visible */
+        transform: translateX(0);
       }
-
-      #inputArea {
-        left: 0 !important;
+      .main-content {
+        margin-left: 0;
         width: 100%;
+        height: calc(100vh - var(--header-height) - var(--input-height));
+        display: flex;
+        flex-direction: column;
+      }
+      #chatContainer {
+        height: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 0.5rem;
+        gap: 1rem;
+        flex-wrap: nowrap;
+      }
+      .chat-message {
+        display: inline-block;
+        max-width: 90%;
+        white-space: normal;
+      }
+      #inputArea {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: var(--input-height);
         flex-direction: column;
         align-items: stretch;
+        padding: 0.5rem 1rem;
+        background: var(--color-input-bg);
+        border-top: 1px solid var(--color-border);
+        box-sizing: border-box;
+        z-index: 1100;
       }
-      
-      #inputArea .form-select,
-      #inputArea .btn {
+      #questionInput {
         width: 100%;
+        margin-bottom: 0.5rem;
       }
-
-      /* Oscurecer fondo opcional cuando el sidebar está abierto */
-      body.sidebar-open::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        min-height: 100vh;
-        background: rgba(0,0,0,0.5);
-        z-index: 1049;
+      #modelSelect, #sendBtn {
+        width: 100%;
+        margin-left: 0;
       }
-
-      .chat-message {
-        max-width: 90%;
-        font-size: 0.95rem;
+      #statusMsg, #tokenInfo {
+        display: none;
       }
     }
-
   </style>
 </head>
 <body>
-  <button id="toggleSidebarBtn" class="btn btn-sm btn-secondary d-md-none m-2" style="position: fixed; top: 10px; left: 10px; z-index: 1100;">
-    ☰ Menú
-  </button>
-  <div class="d-flex">
+  <div class="app-container">
     <aside id="sidebar">
       <div class="user-info text-center">
         {% if current_user.is_authenticated %}
@@ -427,29 +424,93 @@
       <ul id="convList" class="list-group"></ul>
     </aside>
 
-  <div class="main-container d-flex flex-column flex-grow-1 w-100 p-3">
-    <h1 class="text-center my-3">EpiCode ⚛️</h1>
-    <div id="chatContainer"></div>
-  </div>
-
-    <div id="inputArea">
-      <textarea id="questionInput" class="form-control" rows="2" placeholder="Escribe tu pregunta…"></textarea>
-      <select id="modelSelect" class="form-select form-select-sm">
-        {% for m in models %}
-              <option value="{{ m }}"
-                {% if m==default_model %}selected{% endif %}>
-                {{ m }}
-              </option>
+    <div class="main-content d-flex flex-column">
+      <header>
+        <div class="header-row-1">
+          <h1>EpiCode ⚛️</h1>
+        </div>
+        <div class="header-row-2 d-flex align-items-center justify-content-between">
+          <button id="toggleSidebarBtn" class="btn btn-sm btn-secondary d-md-none">
+            ☰ Menú
+          </button>
+          <select id="modelSelect" class="form-select form-select-sm ms-auto">
+            {% for m in models %}
+              <option value="{{ m }}" {% if m==default_model %}selected{% endif %}>{{ m }}</option>
             {% endfor %}
-      </select>
-      <button id="sendBtn" class="btn btn-primary btn-sm">Enviar</button>
-      <div id="statusMsg" class="text-muted small mt-2 ps-1"></div>
-      <div id="tokenInfo" class="text-muted small mt-1 ps-1" style="font-size: 0.85rem;">
-        Tokens usados: <span id="tokenCount">0</span> / <span id="tokenLimit">-</span>
+          </select>
+        </div>
+      </header>
+
+      <style>
+        @media (max-width: 768px) {
+          header .header-row-1 {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+          }
+          #inputArea {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: auto;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0.5rem 1rem;
+            background: var(--color-input-bg);
+            border-top: 1px solid var(--color-border);
+            box-sizing: border-box;
+            z-index: 1100;
+          }
+          .input-row {
+            display: flex !important;
+            gap: 0.5rem;
+            align-items: center;
+          }
+          #questionInput {
+            width: 70%;
+            margin-bottom: 0;
+          }
+          #sendBtn {
+            width: 25%;
+            margin-left: 0;
+          }
+          .status-row {
+            display: flex !important;
+            justify-content: space-between;
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--color-text);
+          }
+          #statusMsg, #tokenInfo {
+            display: block;
+            white-space: nowrap;
+          }
+          #chatContainer {
+            height: calc(100vh - var(--header-height) - var(--input-height) * 2);
+            overflow-y: auto;
+            padding: 1rem;
+          }
+        }
+      </style>
+
+      <div id="chatContainer"></div>
+
+      <div id="inputArea">
+        <div class="input-row" style="display: flex; gap: 0.5rem; align-items: center;">
+          <textarea id="questionInput" class="form-control" rows="2" placeholder="Escribe tu pregunta…"></textarea>
+          <button id="sendBtn" class="btn btn-primary btn-sm">Enviar</button>
+        </div>
+        <div class="status-row" style="display: flex; justify-content: space-between; margin-top: 0.25rem; font-size: 0.85rem; color: var(--color-text);">
+          <div id="statusMsg" class="text-muted small ps-1"></div>
+          <div id="tokenInfo" class="text-muted small ps-1">
+            Tokens usados: <span id="tokenCount">0</span> / <span id="tokenLimit">-</span>
+          </div>
+        </div>
+        <div id="errorAlert" class="alert alert-danger mt-2 d-none" role="alert" style="margin-bottom: 0;"></div>
       </div>
-      <div id="errorAlert" class="alert alert-danger mt-2 d-none" role="alert" style="margin-bottom: 0;"></div>
     </div>
-</div>
+  </div>
   <div id="overlay"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
