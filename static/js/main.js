@@ -140,49 +140,72 @@ async function deleteConversation(convId) {
 
 // --- UI for the conversation list (sidebar) ---
 
+
 function renderConversationList() {
-  const ul = document.getElementById("convList"); // Changed from conversationList to convList as per HTML
+  const ul = document.getElementById("convList");
   ul.innerHTML = "";
   if (conversations.length === 0) {
-    ul.innerHTML = "<li class='list-group-item text-muted'>No hay conversaciones.</li>";
+    const emptyLi = document.createElement("li");
+    emptyLi.className = "text-muted";
+    emptyLi.textContent = "No hay conversaciones.";
+    ul.appendChild(emptyLi);
+    return;
   }
 
   conversations.forEach(conv => {
     const li = document.createElement("li");
-    li.className = "list-group-item list-group-item-action";
+    li.className = "";
     if (conv.id === currentConvId) li.classList.add("active");
 
-    // Create container for title and buttons in two rows
+    // Title container
     const titleDiv = document.createElement("div");
-    titleDiv.style.alignSelf = "flex-start";
     titleDiv.textContent = conv.title;
     titleDiv.style.fontWeight = "600";
 
+    // Buttons container
     const btnRow = document.createElement("div");
     btnRow.className = "btn-row";
 
     // Rename button
     const renameBtn = document.createElement("button");
-    renameBtn.className = "btn btn-sm btn-link p-0";
-    renameBtn.innerHTML = '✏️'; // Pencil icon
+    renameBtn.className = "";
+    renameBtn.innerHTML = '✏️';
     renameBtn.title = "Renombrar";
+    renameBtn.style.background = "transparent";
+    renameBtn.style.border = "none";
+    renameBtn.style.color = "inherit";
+    renameBtn.style.fontSize = "1.1rem";
+    renameBtn.style.padding = "0";
+    renameBtn.style.cursor = "pointer";
+    renameBtn.style.transition = "color 0.2s ease";
     renameBtn.onclick = (e) => {
-      e.stopPropagation(); // Prevent selecting conversation when clicking rename
+      e.stopPropagation();
       const newName = prompt("Nuevo nombre para la conversación:", conv.title);
       if (newName !== null && newName.trim() !== "" && newName !== conv.title) {
         saveConversationTitle(conv.id, newName.trim());
       }
     };
+    renameBtn.onmouseover = () => renameBtn.style.color = "var(--color-primary)";
+    renameBtn.onmouseout = () => renameBtn.style.color = "inherit";
 
     // Delete button
     const delBtn = document.createElement("button");
-    delBtn.className = "btn btn-sm btn-link text-danger p-0";
+    delBtn.className = "";
     delBtn.innerHTML = "🗑️";
     delBtn.title = "Borrar conversación";
+    delBtn.style.background = "transparent";
+    delBtn.style.border = "none";
+    delBtn.style.color = "inherit";
+    delBtn.style.fontSize = "1.1rem";
+    delBtn.style.padding = "0";
+    delBtn.style.cursor = "pointer";
+    delBtn.style.transition = "color 0.2s ease";
     delBtn.onclick = e => {
       e.stopPropagation();
       deleteConversation(conv.id);
     };
+    delBtn.onmouseover = () => delBtn.style.color = "var(--color-primary)";
+    delBtn.onmouseout = () => delBtn.style.color = "inherit";
 
     btnRow.appendChild(renameBtn);
     btnRow.appendChild(delBtn);

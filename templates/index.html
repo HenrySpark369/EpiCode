@@ -5,10 +5,11 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Asistente de Programación</title>
-  <link
+  <!-- Bootstrap CSS removed to eliminate dependency -->
+  <!-- <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
-  />
+  /> -->
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css"
@@ -26,8 +27,8 @@
       --color-bg: #ffffff;
       --color-surface: #f1f3f5;
       --color-text: #212529;
-      --color-primary: #0d6efd;
-      --color-primary-rgb: 13,110,253;
+      --color-primary: #6f42c1;
+      --color-primary-rgb: 111,66,193;
       --color-text-on-primary: #ffffff;
       --color-border: #dee2e6;
       --color-input-bg: #f8f9fa;
@@ -40,8 +41,8 @@
       --color-bg: #121212;
       --color-surface: #1e1e1e;
       --color-text: #e0e0e0;
-      --color-primary: #90caf9;
-      --color-primary-rgb: 144,202,249;
+      --color-primary: #b39ddb;
+      --color-primary-rgb: 179,157,219;
       --color-text-on-primary: #000000;
       --color-border: #333333;
       --color-input-bg: #2c2c2c;
@@ -69,6 +70,40 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+
+    /* Override Bootstrap button colors to purple palette */
+    .btn-primary {
+      background-color: var(--color-primary) !important;
+      border-color: var(--color-primary) !important;
+      color: var(--color-text-on-primary) !important;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      background-color: var(--color-primary) !important;
+      border-color: var(--color-primary) !important;
+    }
+
+    .btn-info {
+      background-color: #7e57c2 !important; /* a medium purple */
+      border-color: #7e57c2 !important;
+      color: #ffffff !important;
+    }
+    .btn-info:hover {
+      opacity: 0.9;
+      background-color: #7e57c2 !important;
+      border-color: #7e57c2 !important;
+    }
+
+    .btn-secondary {
+      background-color: #9575cd !important; /* a lighter purple */
+      border-color: #9575cd !important;
+      color: #ffffff !important;
+    }
+    .btn-secondary:hover {
+      opacity: 0.9;
+      background-color: #9575cd !important;
+      border-color: #9575cd !important;
     }
 
     /* Layout container */
@@ -421,8 +456,62 @@
       <button id="newConvBtn" class="btn btn-sm btn-primary mb-2 w-100">
         Nueva conversación
       </button>
-      <ul id="convList" class="list-group"></ul>
+      <ul id="convList" class="conv-list"></ul>
     </aside>
+
+    <style>
+      /* Mejoras visuales para el listado de conversaciones en el sidebar */
+      #themeToggle {
+        margin-bottom: 1rem; /* space between toggle and new conversation button */
+      }
+      #newConvBtn {
+        margin-bottom: 1rem; /* space between new conversation button and first conversation */
+      }
+      .conv-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .conv-list li {
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        padding: 0.75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      }
+      .conv-list li:hover {
+        background-color: var(--color-primary);
+        color: var(--color-text-on-primary);
+        box-shadow: 0 4px 8px rgba(111,66,193,0.3);
+      }
+      .conv-list li.active {
+        background-color: var(--color-primary);
+        color: var(--color-text-on-primary);
+        box-shadow: 0 4px 8px rgba(111,66,193,0.5);
+      }
+      .conv-list li div.btn-row {
+        display: flex;
+        gap: 0.5rem;
+      }
+      .conv-list li div.btn-row button {
+        background: transparent;
+        border: none;
+        color: inherit;
+        font-size: 1.1rem;
+        padding: 0;
+        cursor: pointer;
+        transition: color 0.2s ease;
+      }
+      .conv-list li div.btn-row button:hover {
+        color: var(--color-primary);
+      }
+    </style>
 
     <div class="main-content d-flex flex-column">
       <header>

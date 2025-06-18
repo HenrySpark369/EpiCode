@@ -7,8 +7,8 @@
   --color-bg: #ffffff;
   --color-surface: #f1f3f5;
   --color-text: #212529;
-  --color-primary: #0d6efd;
-  --color-primary-rgb: 13,110,253;
+  --color-primary: #6f42c1;
+  --color-primary-rgb: 111,66,193;
   --color-text-on-primary: #ffffff;
   --color-border: #dee2e6;
   --color-input-bg: #f8f9fa;
@@ -18,8 +18,8 @@
   --color-bg: #121212;
   --color-surface: #1e1e1e;
   --color-text: #e0e0e0;
-  --color-primary: #90caf9;
-  --color-primary-rgb: 144,202,249;
+  --color-primary: #b39ddb;
+  --color-primary-rgb: 179,157,219;
   --color-text-on-primary: #000000;
   --color-border: #333333;
   --color-input-bg: #2c2c2c;
@@ -60,13 +60,16 @@ label, input, button, .link-btn {
   margin-bottom: .5em;
 }
 
-input {
+input, textarea, select {
   padding: .5em;
   background: var(--color-input-bg);
   color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: .25rem;
   box-sizing: border-box;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
 }
 
 button, .link-btn {
@@ -80,9 +83,43 @@ button, .link-btn {
   text-decoration: none;
   width: 100%;
   box-sizing: border-box;
+  font-size: 1rem;
+  line-height: 1.5;
+  user-select: none;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
 button:hover, .link-btn:hover {
+  opacity: 0.9;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-secondary {
+  background-color: #9575cd;
+  border-color: #9575cd;
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  opacity: 0.9;
+}
+
+.btn-info {
+  background-color: #7e57c2;
+  border-color: #7e57c2;
+  color: #ffffff;
+}
+
+.btn-info:hover {
   opacity: 0.9;
 }
 
@@ -124,6 +161,7 @@ button:hover, .link-btn:hover {
   }
 }
 
+
 /*—————————————————————————————————————*/
 /* 5) FORMULARIOS LOGIN Y REGISTER      */
 /*—————————————————————————————————————*/
@@ -131,46 +169,109 @@ form {
   margin-top: 1em;
 }
 
+/* Custom button styles moved from login.html */
+.btn {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  padding: 0.5em;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  line-height: 1.5;
+  user-select: none;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+.btn:hover {
+  opacity: 0.9;
+}
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+.btn-secondary {
+  background-color: #9575cd;
+  border-color: #9575cd;
+  color: #ffffff;
+}
+.btn-info {
+  background-color: #7e57c2;
+  border-color: #7e57c2;
+  color: #ffffff;
+}
+
 /* Sidebar conversation list item layout */
 #convList .list-group-item {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  height: 3.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
   box-sizing: border-box;
 }
 
-#convList .list-group-item span {
+#convList .list-group-item:hover {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: 0 4px 10px rgba(111,66,193,0.4);
+}
+
+#convList .list-group-item.active {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 10px rgba(111,66,193,0.6);
+  font-weight: 700;
+  outline: 2px solid var(--color-text-on-primary);
+  outline-offset: 2px;
+}
+
+#convList .list-group-item > div:first-child {
   font-weight: 600;
-  align-self: flex-start;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  user-select: none;
+}
+
+#convList .list-group-item .btn-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0;
+  align-items: center;
 }
 
 #convList .list-group-item button {
   background: transparent;
   border: none;
   padding: 0;
-  margin-left: 0.5rem;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: 1;
-}
-
-#convList .list-group-item .btn-link {
   color: inherit;
+  transition: color 0.2s ease;
 }
 
-#convList .list-group-item .btn-link:hover {
+#convList .list-group-item button:hover {
   color: var(--color-primary);
 }
 
-/* Container for buttons row */
-#convList .list-group-item .btn-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: auto;
-  align-items: center;
+/* Emoji styles */
+.emoji {
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.5));
+  background-color: transparent;
 }
 
 form label {
